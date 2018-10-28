@@ -5,6 +5,7 @@ import config.HurricaneNode;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.swingViewer.Viewer;
+import simulator.SimulatorContext;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,15 +14,20 @@ import java.io.IOException;
 
 public class Parser {
 
-    public void parseFile(String file) throws IOException {
+    public SimulatorContext parseFile(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        Graph graph = configGraph();
+        HurricaneGraph graph = configGraph();
 
         parseVerticesNumber(reader.readLine(), graph);
         parseEdges(reader, graph);
         parseVertices(reader, graph);
-        parseDeadline(reader.readLine(), graph);
-        Viewer view = graph.display();
+        int deadline = parseDeadline(reader.readLine(), graph);
+        Viewer view = graph.display(); //TODO remove, only for debugging
+
+        SimulatorContext context = new SimulatorContext();
+        context.setGraph(graph);
+        context.setDeadline(deadline);
+        return context;
     }
 
     private void parseVertices(BufferedReader reader, Graph graph) throws IOException {
@@ -58,8 +64,8 @@ public class Parser {
         }
     }
 
-    private Graph configGraph() {
-        Graph graph = new HurricaneGraph("Tutorial 1");
+    private HurricaneGraph configGraph() {
+        HurricaneGraph graph = new HurricaneGraph("Tutorial 1");
         graph.setAutoCreate(true);
         graph.setStrict(false);
         String styleSheet =
@@ -104,10 +110,9 @@ public class Parser {
         }
     }
 
-    private void parseDeadline(String deadlineToParse, Graph graph){
+    private int parseDeadline(String deadlineToParse, Graph graph){
         deadlineToParse = clearComments(deadlineToParse);
-        int deadline = Integer.valueOf(deadlineToParse.split(" ")[1]);
-        graph.addAttribute("deadline", deadline);
+        return Integer.valueOf(deadlineToParse.split(" ")[1]);
     }
 
 
