@@ -12,5 +12,8 @@ public class SimulatorContext {
     @Getter @Setter
     private int deadline;
 
+    @Getter @Setter
+    private double k;
+
 
 }

@@ -22,7 +22,6 @@ public class Parser {
         parseEdges(reader, graph);
         parseVertices(reader, graph);
         int deadline = parseDeadline(reader.readLine(), graph);
-        Viewer view = graph.display(); //TODO remove, only for debugging
 
         SimulatorContext context = new SimulatorContext();
         context.setGraph(graph);
@@ -116,7 +115,7 @@ public class Parser {
     }
 
 
-
+//TODO del
     public static void main(String[] args) throws IOException {
 
         Parser p = new Parser();
