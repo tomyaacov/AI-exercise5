@@ -1,11 +1,14 @@
 package simulator;
 
 import agent.Agent;
-import agent.AgentFacroty;
+import agent.AgentFactory;
+import config.HurricaneNode;
 import lombok.Getter;
 import lombok.Setter;
+import org.graphstream.ui.swingViewer.Viewer;
 import parser.Parser;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +23,7 @@ public class Simulator {
     private List<Agent> agents;
 
     @Getter @Setter
-    private AgentFacroty agentFacroty;
+    private AgentFactory agentFacroty;
 
     @Getter @Setter
     private Parser parser;
@@ -28,7 +31,52 @@ public class Simulator {
 
     public void run(){
         initialize();
+        Viewer view = context.getGraph().display();
+        for(Agent agent : agents){
+            agent.doActionInNode();
+        }
+        while(isGameOn()){
+            String initPos="";
+            for (int i=0; i<agents.size(); i++){
+                initPos += "agent " + (i+1)+ " in node: " + agents.get(i).getCurrNode().getId() +
+                        "people in vehicle: " + agents.get(i).getPeople() + "; ";
+            }
+            context.getGraph().setAttribute(
+                    "ui.title", initPos);
+            for (int i = 0; i < agents.size(); i++ ){
+                Agent agent = agents.get(i);
+                if (isAgentTimeNotOver(agent)){
+                    HurricaneNode node = agent.doNextAction();
+                    agent.doActionInNode();
+                    setAgentState(i, agent, node);
+                }
 
+            }
+        }
+    }
+
+    private void setAgentState(int i, Agent agent, HurricaneNode node) {
+        String agentState;
+        if(node == null){
+            agentState = "agent time is up.";
+        } else{
+            agentState = "agent " + (i+1) + "is in node " + node.getId() + "; agent time is: "
+                    + agent.getTime() + "; deadline: " + context.getDeadline() + "; agent have " +
+                    agent.getPeople() + " people in vehicle";
+        }
+        if(node != null){
+            node.setAttribute("ui.label", node);
+        }
+        context.getGraph().setAttribute("ui.title",  agentState);
+    }
+
+    private boolean isAgentTimeNotOver(Agent agent) {
+        return agent.getTime() < context.getDeadline();
+    }
+
+    private boolean isGameOn() {
+        int deadline =  context.getDeadline();
+        return agents.stream().anyMatch(agent -> agent.getTime() < deadline);
     }
 
     private void initialize(){
@@ -36,11 +84,10 @@ public class Simulator {
         //TODO any spring like dependency injection?
         Scanner input = new Scanner(System.in);
         agents = new LinkedList<>();
-        agentFacroty = new AgentFacroty();
         parser = new Parser();
-
         context = initializeGraph();
-        context.getGraph().display(); //TODO delete
+        agentFacroty = new AgentFactory(context);
+
         System.out.println("Welcome to Agent simulator");
         System.out.println("Please enter a value for K constant:");
         context.setK(input.nextDouble());

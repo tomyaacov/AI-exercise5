@@ -32,7 +32,7 @@ public abstract class Agent {
      * calculate next action (traverse/ noOp) according to agent's strategy
      * nextAction will always call noOp() or traverse() methods
      */
-    public abstract void doNextAction();
+    public abstract HurricaneNode doNextAction();
     
     public void noOp(){
         time = time + 1;
@@ -41,6 +41,6 @@ public abstract class Agent {
     /**
      * choose the next node to be visit
      */
-    public abstract void traverse();
+    public abstract HurricaneNode traverse();
     
 }
