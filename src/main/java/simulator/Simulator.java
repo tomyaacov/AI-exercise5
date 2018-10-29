@@ -9,6 +9,7 @@ import org.graphstream.ui.swingViewer.Viewer;
 import parser.Parser;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -112,7 +113,7 @@ public class Simulator {
 
     private SimulatorContext initializeGraph() {
         try {
-            return parser.parseFile("src\\main\\resources\\graph");
+            return parser.parseFile("src.main.resources.graph".replace(".", File.separator));
         } catch (IOException e) {
             System.err.println("parsing 'graph.txt' file encountered a problem. Check for valid input");
             System.exit(1);
