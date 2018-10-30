@@ -22,7 +22,7 @@ public class VandalAgent extends Agent {
 
     @Override
     public AgentAction doNextAction(double currTime) {
-        if(getTurn() <= this.context.getGraph().getNodeCount() ){
+        if(getTurn() < this.context.getGraph().getNodeCount() ){
             turn++;
             return noOp(currTime);
         }

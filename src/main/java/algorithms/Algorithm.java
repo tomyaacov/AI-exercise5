@@ -1,5 +1,6 @@
 package algorithms;
 
+import config.HurricaneGraph;
 import config.HurricaneNode;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
@@ -61,16 +62,18 @@ public class Algorithm {
 
 
             Iterator<Edge> it = u.getEdgeIterator();
-            while (it.hasNext()){
+            while (it.hasNext()) {
                 currentEdge = it.next();
-                v = currentEdge.getOpposite(u);
-                alt = dist.get(Integer.parseInt(u.getId())) + currentEdge.getNumber("weight")
-                        * (1 + simulatorContext.getK() * nodeCarrying.get(Integer.parseInt(u.getId())) );
-                if (alt < dist.get(Integer.parseInt(v.getId()))){
-                    dist.set(Integer.parseInt(v.getId()), alt);
-                    prev.set(Integer.parseInt(v.getId()), u);
-                    if (!v.isShelter()){
-                        nodeCarrying.set(Integer.parseInt(v.getId()), nodeCarrying.get(Integer.parseInt(u.getId())) + v.getPeople());
+                if (!HurricaneGraph.isEdgeBlock(currentEdge)) {
+                    v = currentEdge.getOpposite(u);
+                    alt = dist.get(Integer.parseInt(u.getId())) + currentEdge.getNumber("weight")
+                            * (1 + simulatorContext.getK() * nodeCarrying.get(Integer.parseInt(u.getId())));
+                    if (alt < dist.get(Integer.parseInt(v.getId()))) {
+                        dist.set(Integer.parseInt(v.getId()), alt);
+                        prev.set(Integer.parseInt(v.getId()), u);
+                        if (!v.isShelter()) {
+                            nodeCarrying.set(Integer.parseInt(v.getId()), nodeCarrying.get(Integer.parseInt(u.getId())) + v.getPeople());
+                        }
                     }
                 }
             }

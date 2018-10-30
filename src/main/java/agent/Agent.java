@@ -27,7 +27,7 @@ public abstract class Agent {
      */
     public void doActionInNode(){
         if(currNode.isShelter()) {
-            currNode.setPeople(people);
+            currNode.setPeople(people + currNode.getPeople());
             people = 0;
         } else {
             people += currNode.getPeople();
@@ -48,7 +48,7 @@ public abstract class Agent {
     }
 
     protected double calculateTraverseOperation(Edge e){
-        return e.getNumber("weight") * (1 + context.getK() * getCurrNode().getPeople());
+        return e.getNumber("weight") * (1 + context.getK() * getPeople());
     }
 
     protected AgentAction noOp(double time){
