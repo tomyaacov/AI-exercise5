@@ -8,11 +8,10 @@ import java.util.Scanner;
 public class HumanAgent extends Agent{
 
     private Scanner scanner;
-    private SimulatorContext context;
+
 
     public HumanAgent(SimulatorContext context){
-        super();
-        this.context = context;
+        super(context);
         scanner =  new Scanner(System.in);
     }
 
@@ -64,12 +63,5 @@ public class HumanAgent extends Agent{
         return null; //no enough time, agent done
     }
 
-    private boolean isEnoughTime(Edge edgeToTraverse, double currTime) {
-        // currTime + w(1+Kp) < deadline ?
-        return currTime + calculateTraverseOperation(edgeToTraverse) <= context.getDeadline();
-    }
 
-    private double calculateTraverseOperation(Edge e){
-        return e.getNumber("weight") * (1 + context.getK() * getCurrNode().getPeople());
-    }
 }
