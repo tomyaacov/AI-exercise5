@@ -52,7 +52,7 @@ public abstract class Agent {
     }
 
     protected AgentAction noOp(double time){
-        return new AgentAction(getCurrNode(), time+1);
+        return new AgentAction(getCurrNode(), 1);
     }
 
 }

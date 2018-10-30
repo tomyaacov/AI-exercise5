@@ -51,12 +51,18 @@ public class Simulator {
                 time += action.getTime();
                 agent.doActionInNode();
                 setAgentState(i, agent, time);
+
+                //TODO may remove
+                System.out.println("press to see next move");
+                Scanner input = new Scanner(System.in);
+                input.next();
+
             }
         }
     }
 
     private boolean isGameOn(double time) {
-        return time <= context.getDeadline();
+        return time < context.getDeadline();
     }
 
     private void pickUpPeopleInInitPosition() {
