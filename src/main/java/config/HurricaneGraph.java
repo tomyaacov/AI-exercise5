@@ -1,5 +1,6 @@
 package config;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.NodeFactory;
 import org.graphstream.graph.implementations.AbstractGraph;
@@ -32,6 +33,19 @@ public class HurricaneGraph extends SingleGraph {
                 return new HurricaneNode((AbstractGraph)graph, id);
             }
         });
+    }
+
+    public static boolean isEdgeBlock(Edge e){
+        return e.getAttribute("block");
+    }
+
+    public static void setEdgeBlock(Edge e, boolean block){
+        e.setAttribute("block", block);
+        if(block){
+            e.setAttribute("ui.class", "block");
+        } else{
+            e.setAttribute("ui.class", "edge");
+        }
     }
 
 

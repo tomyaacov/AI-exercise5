@@ -68,15 +68,19 @@ public class Parser {
         graph.setStrict(false);
         String styleSheet =
                 "node {" +
-                        "text-size: 16px;" +
-                        "	fill-color: black;" +
-                        "}" +
-                        "node.shelter {" +
-                        "	fill-color: red;" +
-                        "}" +
-                        "edge {" +
-                        "text-size: 24px;\n" +
-                        "}";
+                    "text-size: 16px;" +
+                    "fill-color: black;" +
+                "}" +
+                "node.shelter {" +
+                    "fill-color: green;" +
+                "}" +
+                "edge {" +
+                    "text-size: 24px;" +
+                    "fill-color: black;" +
+                "}" +
+                "edge.block{" +
+                    "fill-color: red;" +
+                "}";
         graph.addAttribute("ui.stylesheet", styleSheet);
         return graph;
     }
@@ -94,6 +98,7 @@ public class Parser {
         e.addAttribute("weight", edgeWeight);
         e.addAttribute("ui.label", edgeWeight);
         e.setAttribute("ui.class", "edge");
+        e.addAttribute("block", false);
     }
 
     private String clearComments(String line) {
@@ -118,7 +123,8 @@ public class Parser {
     public static void main(String[] args) throws IOException {
 
         Parser p = new Parser();
-        p.parseFile("src\\main\\resources\\graph");
-
+        SimulatorContext s =p.parseFile("src\\main\\resources\\graph");
+        s.getGraph().display();
+        HurricaneGraph.setEdgeBlock(s.getGraph().getEdge("1-2"),true);
     }
 }

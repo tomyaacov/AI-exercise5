@@ -1,10 +1,8 @@
 package agent;
 
-import config.HurricaneNode;
 import org.graphstream.graph.Edge;
 import simulator.SimulatorContext;
 
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class HumanAgent extends Agent{
@@ -19,7 +17,7 @@ public class HumanAgent extends Agent{
     }
 
     @Override
-    public HurricaneNode doNextAction() {
+    public AgentAction doNextAction(double currTime) {
         while (true) {
             System.out.println("Please choose human agent next move: 1) traverse.  2) no-op.");
             int operation = 0;
@@ -28,18 +26,20 @@ public class HumanAgent extends Agent{
             } catch (Exception e){}
 
             if (operation == 1) {
-                return traverse();
+                return traverse(currTime);
             } else if (operation == 2) {
-                setTime(getTime() + 1);
-                return getCurrNode();
+                return noOPAction(currTime);
             } else {
                 System.out.println("Illegal operation, please try again.");
             }
         }
     }
 
-    @Override
-    public HurricaneNode traverse() {
+    private AgentAction noOPAction(double currTime) {
+        return new AgentAction(getCurrNode(), currTime + 1);
+    }
+
+    public AgentAction traverse(double currTime) {
         String nodeId = null;
         Edge e = null;
         while (nodeId == null || e == null) {
@@ -54,17 +54,19 @@ public class HumanAgent extends Agent{
                 System.out.println("Illegal value. Please try again.");
             }
         }
-        if(isEnoughTime(e)){
-            setTime(calculateTraverseOperation(e) + getTime());
+        if(isEnoughTime(e, currTime)){
+            AgentAction action =
+                    new AgentAction(context.getGraph().getNode(nodeId), calculateTraverseOperation(e));
+
             setCurrNode(context.getGraph().getNode(nodeId));
-            return getCurrNode();
+            return action;
         }
         return null; //no enough time, agent done
     }
 
-    private boolean isEnoughTime(Edge e) {
+    private boolean isEnoughTime(Edge edgeToTraverse, double currTime) {
         // currTime + w(1+Kp) < deadline ?
-        return getTime() + calculateTraverseOperation(e) <= context.getDeadline();
+        return currTime + calculateTraverseOperation(edgeToTraverse) <= context.getDeadline();
     }
 
     private double calculateTraverseOperation(Edge e){

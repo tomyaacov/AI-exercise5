@@ -8,9 +8,6 @@ public abstract class Agent {
 
     @Getter @Setter
     private HurricaneNode currNode;
-    
-    @Getter @Setter
-    private double time;
 
     @Getter @Setter
     private int people;
@@ -31,16 +28,9 @@ public abstract class Agent {
     /**
      * calculate next action (traverse/ noOp) according to agent's strategy
      * nextAction will always call noOp() or traverse() methods
+     * returns action time
      */
-    public abstract HurricaneNode doNextAction();
-    
-    public void noOp(){
-        time = time + 1;
-    }
+    public abstract AgentAction doNextAction(double currTime);
 
-    /**
-     * choose the next node to be visit
-     */
-    public abstract HurricaneNode traverse();
-    
+
 }

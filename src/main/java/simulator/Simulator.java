@@ -1,6 +1,7 @@
 package simulator;
 
 import agent.Agent;
+import agent.AgentAction;
 import agent.AgentFactory;
 import config.HurricaneNode;
 import lombok.Getter;
@@ -32,52 +33,55 @@ public class Simulator {
     public void run(){
         initialize();
         Viewer view = context.getGraph().display();
-        for(Agent agent : agents){
-            agent.doActionInNode();
-        }
-        while(isGameOn()){
-            String initPos="";
-            for (int i=0; i<agents.size(); i++){
-                initPos += "agent " + (i+1)+ " in node: " + agents.get(i).getCurrNode().getId() +
-                        "people in vehicle: " + agents.get(i).getPeople() + "; ";
-            }
-            context.getGraph().setAttribute(
-                    "ui.title", initPos);
+        pickUpPeopleInInitPosition();
+        play();
+    }
+
+    private void play() {
+        double time = 0;
+        while(isGameOn(time)){
             for (int i = 0; i < agents.size(); i++ ){
                 Agent agent = agents.get(i);
-                if (isAgentTimeNotOver(agent)){
-                    HurricaneNode node = agent.doNextAction();
-                    agent.doActionInNode();
-                    setAgentState(i, agent, node);
+                AgentAction action = agent.doNextAction(time);
+                if(action == null){
+                    context.getGraph().setAttribute("ui.title",  "time is UP. Agent last opertaion failed");
+                    return;
                 }
-
+                time += action.getTime();
+                agent.doActionInNode();
+                setAgentState(i, agent, time);
             }
         }
     }
 
-    private void setAgentState(int i, Agent agent, HurricaneNode node) {
-        String agentState;
-        if(node == null){
-            agentState = "agent time is up.";
-        } else{
-            agentState = "agent " + (i+1) + "is in node " + node.getId() + "; agent time is: "
-                    + agent.getTime() + "; deadline: " + context.getDeadline() + "; agent have " +
-                    agent.getPeople() + " people in vehicle";
+    private boolean isGameOn(double time) {
+        return time <= context.getDeadline();
+    }
+
+    private void pickUpPeopleInInitPosition() {
+        for(Agent agent : agents){
+            agent.doActionInNode();
+            HurricaneNode currNode = agent.getCurrNode();
+            currNode.setAttribute("ui.label", currNode);
         }
-        if(node != null){
-            node.setAttribute("ui.label", node);
+        setInitStateInViewerTitle();
+    }
+
+    private void setInitStateInViewerTitle() {
+        for (int i=0; i<agents.size(); i++){
+            setAgentState(i, agents.get(i), 0);
         }
+    }
+
+    private void setAgentState(int i, Agent agent, double time) {
+        String agentState = "agent " + (i+1) + "is in node " + agent.getCurrNode().getId() + "; time is: "
+                +time + "; deadline: " + context.getDeadline() + "; agent have " +
+                agent.getPeople() + " people in vehicle";
+
+        agent.getCurrNode().setAttribute("ui.label", agent.getCurrNode());
         context.getGraph().setAttribute("ui.title",  agentState);
     }
 
-    private boolean isAgentTimeNotOver(Agent agent) {
-        return agent.getTime() < context.getDeadline();
-    }
-
-    private boolean isGameOn() {
-        int deadline =  context.getDeadline();
-        return agents.stream().anyMatch(agent -> agent.getTime() < deadline);
-    }
 
     private void initialize(){
 
