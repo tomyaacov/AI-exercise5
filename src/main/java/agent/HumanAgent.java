@@ -27,16 +27,13 @@ public class HumanAgent extends Agent{
             if (operation == 1) {
                 return traverse(currTime);
             } else if (operation == 2) {
-                return noOPAction(currTime);
+                return noOp(currTime);
             } else {
                 System.out.println("Illegal operation, please try again.");
             }
         }
     }
 
-    private AgentAction noOPAction(double currTime) {
-        return new AgentAction(getCurrNode(), currTime + 1);
-    }
 
     public AgentAction traverse(double currTime) {
         String nodeId = null;

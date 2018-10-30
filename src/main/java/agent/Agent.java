@@ -51,4 +51,8 @@ public abstract class Agent {
         return e.getNumber("weight") * (1 + context.getK() * getCurrNode().getPeople());
     }
 
+    protected AgentAction noOp(double time){
+        return new AgentAction(getCurrNode(), time+1);
+    }
+
 }
