@@ -29,36 +29,48 @@ public class Algorithm {
         HurricaneNode u, v;
         Double alt;
         Edge currentEdge;
-        List<HurricaneNode> Q = new ArrayList<HurricaneNode>(simulatorContext.getGraph().getNodeCount());
-        List<Double> dist = new ArrayList<Double>(simulatorContext.getGraph().getNodeCount());
-        List<HurricaneNode> prev = new ArrayList<HurricaneNode>(simulatorContext.getGraph().getNodeCount());
-        List<Integer> nodeCarrying = new ArrayList<Integer>(simulatorContext.getGraph().getNodeCount());
+        List<HurricaneNode> Q = new ArrayList<HurricaneNode>(simulatorContext.getGraph().getNodeCount()+1);
+        List<Double> dist = new ArrayList<Double>(simulatorContext.getGraph().getNodeCount()+1);
+        List<HurricaneNode> prev = new ArrayList<HurricaneNode>(simulatorContext.getGraph().getNodeCount()+1);
+        List<Integer> nodeCarrying = new ArrayList<Integer>(simulatorContext.getGraph().getNodeCount()+1);
+
+
+        Q.add(0, null);
+        dist.add(0, Double.MAX_VALUE);
+        prev.add(0, null);
+        nodeCarrying.add(0,null);
+
 
         for(Node n:simulatorContext.getGraph()) {
-            Q.add(Integer.parseInt(n.getId())-1, (HurricaneNode)n);
-            dist.add(Integer.parseInt(n.getId())-1, Double.MAX_VALUE);
-            prev.add(Integer.parseInt(n.getId())-1, null);
-            nodeCarrying.add(Integer.parseInt(n.getId())-1, 0);
+            Q.add(Integer.parseInt(n.getId()), (HurricaneNode)n);
+            dist.add(Integer.parseInt(n.getId()), Double.MAX_VALUE);
+            prev.add(Integer.parseInt(n.getId()), null);
+            nodeCarrying.add(Integer.parseInt(n.getId()), 0);
 
         }
 
-        dist.set(Integer.parseInt(source.getId())-1, 0.0);
-        nodeCarrying.set(Integer.parseInt(source.getId())-1, sourceCarrying);
+        dist.set(Integer.parseInt(source.getId()), 0.0);
+        nodeCarrying.set(Integer.parseInt(source.getId()), sourceCarrying);
 
-        while (!Q.isEmpty()){
-            u = Q.remove(dist.indexOf(Collections.min(dist)));
+        Integer minDist;
+
+        while (true){
+            minDist = getMinDist(dist, Q);
+            if (minDist == null){break;}
+            u = Q.set(minDist, null);
+
 
             Iterator<Edge> it = u.getEdgeIterator();
             while (it.hasNext()){
                 currentEdge = it.next();
                 v = currentEdge.getOpposite(u);
-                alt = dist.get(Integer.parseInt(u.getId())-1) + currentEdge.getNumber("weight")
-                        * (1 + simulatorContext.getK() * nodeCarrying.get(Integer.parseInt(u.getId())-1) );
-                if (alt < dist.get(Integer.parseInt(v.getId())-1)){
-                    dist.set(Integer.parseInt(v.getId())-1, alt);
-                    prev.set(Integer.parseInt(v.getId())-1, u);
+                alt = dist.get(Integer.parseInt(u.getId())) + currentEdge.getNumber("weight")
+                        * (1 + simulatorContext.getK() * nodeCarrying.get(Integer.parseInt(u.getId())) );
+                if (alt < dist.get(Integer.parseInt(v.getId()))){
+                    dist.set(Integer.parseInt(v.getId()), alt);
+                    prev.set(Integer.parseInt(v.getId()), u);
                     if (!v.isShelter()){
-                        nodeCarrying.set(Integer.parseInt(v.getId())-1, nodeCarrying.get(Integer.parseInt(u.getId())-1) + v.getPeople());
+                        nodeCarrying.set(Integer.parseInt(v.getId()), nodeCarrying.get(Integer.parseInt(u.getId())) + v.getPeople());
                     }
                 }
             }
@@ -67,13 +79,25 @@ public class Algorithm {
         return new DijkstraOutput(dist, prev, nodeCarrying);
     }
 
+    public static Integer getMinDist(List<Double> dist, List<HurricaneNode> Q){
+        Double currMinDist = Double.MAX_VALUE;
+        Integer result = null;
+        for (int i = 1; i < dist.size(); i++){
+            if(currMinDist > dist.get(i) && Q.get(i) != null){
+                currMinDist = dist.get(i);
+                result = i;
+            }
+        }
+        return result;
+    }
+
     public static void main(String[] args) throws Exception{
         Parser parser = new Parser();
         SimulatorContext context = parser.parseFile("src.main.resources.graph_dijkstra_test".replace(".", File.separator));
         context.setK(0.5);
         Viewer view = context.getGraph().display();
-        HurricaneNode source = context.getGraph().getNode("1");
-        DijkstraOutput output = Algorithm.dijkstra(context, source, 0);
+        HurricaneNode source = context.getGraph().getNode("2");
+        DijkstraOutput output = Algorithm.dijkstra(context, source, 1);
         System.out.println(output);
 
     }
