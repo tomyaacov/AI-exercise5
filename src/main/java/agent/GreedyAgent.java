@@ -37,7 +37,7 @@ public class GreedyAgent extends Agent {
             for(int i = 1; i < output.getDist().size(); i++){
                 if (i != Integer.parseInt(getCurrNode().getId())){//checking it is not the same node
                     checkedNode = context.getGraph().getNode(Integer.toString(i));
-                    if (checkedNode.getPeople() > 0){//looking for vertex with people only
+                    if (checkedNode.getPeople() > 0  && !checkedNode.isShelter()){//looking for vertex with people only
                         if(shortestPathDist > output.getDist().get(i)){
                             shortestPathDist = output.getDist().get(i);
                             targetNode = i;
