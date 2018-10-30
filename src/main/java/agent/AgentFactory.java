@@ -16,7 +16,12 @@ public class AgentFactory {
     public Agent getAgent(int agentType){
         if (agentType == 1){
             return new HumanAgent(context);
+        } else if(agentType == 2){
+            return null;
+        } else if(agentType == 3){
+            return new VandalAgent(context);
         }
+
         //TODO elseif...
         else {
             return null;
