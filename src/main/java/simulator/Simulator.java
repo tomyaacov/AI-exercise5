@@ -4,6 +4,7 @@ import agent.Agent;
 import agent.AgentAction;
 import agent.AgentFactory;
 import config.HurricaneNode;
+import entities.State;
 import lombok.Getter;
 import lombok.Setter;
 import org.graphstream.ui.swingViewer.Viewer;
@@ -39,18 +40,17 @@ public class Simulator {
     }
 
     private void play() {
-        double time = 0;
-        while(isGameOn(time)){
+        while(isGameOn(context.getTime())){
             for (int i = 0; i < agents.size(); i++ ){
                 Agent agent = agents.get(i);
-                AgentAction action = agent.doNextAction(time);
+                AgentAction action = agent.doNextAction(context.getTime());
                 if(action == null){
                     context.getGraph().setAttribute("ui.title",  "time is UP. Agent " + (i+1) + " last opertaion failed");
                     return;
                 }
-                time += action.getTime();
+                context.setTime(context.getTime() + action.getTime());
                 agent.doActionInNode();
-                setAgentState(i, agent, time);
+                setAgentState(i, agent, context.getTime());
 
                 //TODO may remove
                 System.out.println("press to see next move");
@@ -98,6 +98,9 @@ public class Simulator {
         agents = new LinkedList<>();
         parser = new Parser();
         context = initializeGraph();
+        context.setTime(0);
+        //TODO: think if we should add deadline to context here
+        State.setDeadline(context.getDeadline());
         agentFacroty = new AgentFactory(context);
 
         System.out.println("Welcome to Agent simulator");
