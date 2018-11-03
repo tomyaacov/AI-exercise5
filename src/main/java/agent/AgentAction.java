@@ -12,7 +12,7 @@ public class AgentAction {
     @Getter @Setter
     private double time;
 
-    protected AgentAction(HurricaneNode node, double time){
+    public AgentAction(HurricaneNode node, double time){
         this.currNode = node;
         this.time = time;
     }

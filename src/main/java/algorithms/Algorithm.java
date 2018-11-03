@@ -95,8 +95,8 @@ public class Algorithm {
         return result;
     }
 
-    public static Double heuristicFunction(State state){
-        return 1.0;
+    public static double heuristicFunction(State state){
+        return 0;
     }
 
     public static void main(String[] args) throws Exception{

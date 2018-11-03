@@ -115,7 +115,8 @@ public class Simulator {
 
     private void initializeAgent(Scanner input, int i) {
         System.out.println("Agent no. " + (i+1) + ":");
-        System.out.println("Please specify agent Type: 1) Humam  2) Greedy  3) Vandal");
+        System.out.println("Please specify agent Type: 1) Humam  2) Greedy  3) Vandal 4) " +
+                "Greedy search agent 5) A* search agent  6) Real time search agent");
         int type = input.nextInt();
         System.out.println("Please specify Agent " + (i+1) +
                 " initial position (number in between 1 to " + context.getGraph().getNodeCount() +"):");
