@@ -45,7 +45,7 @@ public class Simulator {
                 Agent agent = agents.get(i);
                 AgentAction action = agent.doNextAction(time);
                 if(action == null){
-                    context.getGraph().setAttribute("ui.title",  "time is UP. Agent last opertaion failed");
+                    context.getGraph().setAttribute("ui.title",  "time is UP. Agent " + (i+1) + " last opertaion failed");
                     return;
                 }
                 time += action.getTime();
@@ -56,9 +56,10 @@ public class Simulator {
                 System.out.println("press to see next move");
                 Scanner input = new Scanner(System.in);
                 input.next();
-
             }
         }
+        context.getGraph().setAttribute("ui.title",  "time is UP.");
+
     }
 
     private boolean isGameOn(double time) {
