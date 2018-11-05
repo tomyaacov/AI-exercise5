@@ -8,7 +8,7 @@ import config.HurricaneNode;
 import entities.State;
 import lombok.Getter;
 import lombok.Setter;
-import org.graphstream.ui.swingViewer.Viewer;
+import org.graphstream.ui.view.Viewer;
 import parser.Parser;
 
 import java.awt.event.ActionEvent;

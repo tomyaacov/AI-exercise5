@@ -21,5 +21,15 @@ public class SimulatorContext {
     @Getter @Setter
     private double f;
 
+    public SimulatorContext() {
+    }
+
+    public SimulatorContext(SimulatorContext cloneContext){
+        this.graph = cloneContext.graph.clone();
+        this.deadline = cloneContext.getDeadline();
+        this.k = cloneContext.getK();
+        this.time = cloneContext.getTime();
+    }
+
 
 }

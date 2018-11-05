@@ -6,7 +6,8 @@ import entities.State;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.swingViewer.Viewer;
+
+import org.graphstream.ui.view.Viewer;
 import parser.Parser;
 import simulator.SimulatorContext;
 

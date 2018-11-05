@@ -4,8 +4,11 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.NodeFactory;
 import org.graphstream.graph.implementations.AbstractGraph;
+import org.graphstream.graph.implementations.Graphs;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.graph.implementations.SingleNode;
+
+import java.util.Iterator;
 
 public class HurricaneGraph extends SingleGraph {
 
@@ -47,6 +50,19 @@ public class HurricaneGraph extends SingleGraph {
             e.setAttribute("ui.class", "edge");
         }
     }
+
+    public HurricaneGraph clone(){
+        HurricaneGraph cloneGraph = (HurricaneGraph) Graphs.clone(this);
+        Iterator<HurricaneNode> it = this.getNodeIterator();
+        while (it.hasNext()){
+            HurricaneNode thisNode = it.next();
+            HurricaneNode cloneNode = cloneGraph.getNode(thisNode.getId());
+            cloneNode.setPeople(thisNode.getPeople());
+            cloneNode.setShelter(thisNode.isShelter());
+        }
+        return cloneGraph;
+    }
+
 
 
 }
