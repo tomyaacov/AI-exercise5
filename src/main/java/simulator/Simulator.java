@@ -21,7 +21,7 @@ import java.util.Scanner;
 public class Simulator {
 
     @Getter @Setter
-    private SimulatorContext context;
+    static SimulatorContext context;
 
     @Getter @Setter
     private List<Agent> agents;

@@ -59,26 +59,31 @@ public abstract class SearchAgent extends Agent{
         return null;
     }
 
-    private Collection<? extends State> expand(State s) {
+    private List<State> expand(State s) {
         List<State> expandState = new LinkedList<>();
         Iterator<Edge> it = s.getCurrNode().getEdgeIterator();
         while (it.hasNext()) {
             Edge currentEdge = it.next();
             if (!HurricaneGraph.isEdgeBlock(currentEdge)) {
                 HurricaneNode node = currentEdge.getOpposite(s.getCurrNode());
-                Map<String, Boolean> peopleInNodes = updatePeopleInNodesMap(s, node);
-                expandState.add(constructNewState(s, currentEdge, node, peopleInNodes));
+                expandState.add(constructNewState(s, currentEdge, node));
             }
         }
         return expandState;
     }
 
-    private State constructNewState(State s, Edge currentEdge, HurricaneNode node, Map<String, Boolean> peopleInNodes) {
+    private State constructNewState(State s, Edge currentEdge, HurricaneNode node) {
+        Map<String, Integer> peopleMap = new HashMap<>(s.getPeopleInNodes());
+        if (node.isShelter()) {
+            peopleMap.put(node.getId(), node.getPeople() + s.getPeople());
+        } else {
+            peopleMap.put(node.getId(), 0);
+        }
         return new State(s,
                 node,
-                peopleInNodes,
+                peopleMap,
                 s.getTime() + calculateTraverseSearchOperation(currentEdge, s.getPeople()),
-                s.getPeople() + node.getPeople(),
+                node.isShelter() ? 0 : s.getPeople() + node.getPeople(),
                 calculateNextStateCost(s, currentEdge));
     }
 
@@ -91,11 +96,10 @@ public abstract class SearchAgent extends Agent{
 
     }
 
-    private Map<String, Boolean> updatePeopleInNodesMap(State s, HurricaneNode node) {
-        Map<String, Boolean> peopleInNodes = new HashMap<>(s.getPeopleInside());
-        if (peopleInNodes.containsKey(node.getId())){
-            peopleInNodes.put(node.getId(), false);
-        }
+    private Map<String, Integer> updatePeopleInNodesMap(State s, HurricaneNode node) {
+        Map<String, Integer> peopleInNodes = new HashMap<>(s.getPeopleInNodes());
+        peopleInNodes.put(node.getId(), 0);
+
         return peopleInNodes;
     }
 
