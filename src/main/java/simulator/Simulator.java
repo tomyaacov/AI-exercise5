@@ -3,6 +3,7 @@ package simulator;
 import agent.Agent;
 import agent.AgentAction;
 import agent.AgentFactory;
+import agent.search.SearchAgent;
 import config.HurricaneNode;
 import entities.State;
 import lombok.Getter;
@@ -58,6 +59,12 @@ public class Simulator {
                 input.next();
             }
         }
+        for (int i = 0; i < agents.size(); i++ ){
+            Agent agent = agents.get(i);
+            if(agent instanceof SearchAgent){
+                System.out.println("Agent " + (i+1) + " performance measure is " + ((SearchAgent) agent).calculatePerformanceMeasure());
+            }
+        }
         context.getGraph().setAttribute("ui.title",  "time is UP.");
 
     }
@@ -106,6 +113,8 @@ public class Simulator {
         System.out.println("Welcome to Agent simulator");
         System.out.println("Please enter a value for K constant:");
         context.setK(input.nextDouble());
+        System.out.println("Please enter a value for f:");
+        context.setF(input.nextDouble());
         System.out.print("Please specify the number of agents: ");
         int agentNumber = input.nextInt();
         for (int i = 0; i < agentNumber; i++){

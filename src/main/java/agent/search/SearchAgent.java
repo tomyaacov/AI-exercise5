@@ -5,6 +5,8 @@ import agent.AgentAction;
 import config.HurricaneGraph;
 import config.HurricaneNode;
 import entities.State;
+import lombok.Getter;
+import lombok.Setter;
 import org.graphstream.graph.Edge;
 import simulator.SimulatorContext;
 
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 
 public abstract class SearchAgent extends Agent{
 
+    @Setter @Getter
     private int expandGlobalCounter;
     private final int maxExpand;
     private List<HurricaneNode> path;
@@ -103,6 +106,18 @@ public abstract class SearchAgent extends Agent{
             s = s.getPrev();
         }
         return statePath;
+    }
+
+    public double calculatePerformanceMeasure(){
+        int sumRescued = 0;
+        Iterator<HurricaneNode> it = context.getGraph().getNodeIterator();
+        while (it.hasNext()) {
+            HurricaneNode currentNode = it.next();
+            if (currentNode.isShelter()) {
+                sumRescued += currentNode.getPeople();
+            }
+        }
+        return context.getF()*sumRescued + expandGlobalCounter;
     }
 
 }

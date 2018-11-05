@@ -18,5 +18,8 @@ public class SimulatorContext {
     @Getter @Setter
     private double time;
 
+    @Getter @Setter
+    private double f;
+
 
 }
