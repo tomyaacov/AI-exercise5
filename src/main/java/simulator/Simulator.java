@@ -45,6 +45,7 @@ public class Simulator {
             for (int i = 0; i < agents.size(); i++ ){
                 Agent agent = agents.get(i);
                 AgentAction action = agent.doNextAction(context.getTime());
+
                 if(action == null){
                     context.getGraph().setAttribute("ui.title",  "time is UP. Agent " + (i+1) + " last opertaion failed");
                     return;
@@ -55,6 +56,7 @@ public class Simulator {
 
                 //TODO may remove
                 System.out.println("press to see next move");
+
                 Scanner input = new Scanner(System.in);
                 input.next();
             }
@@ -106,8 +108,6 @@ public class Simulator {
         parser = new Parser();
         context = initializeGraph();
         context.setTime(0);
-        //TODO: think if we should add deadline to context here
-        State.setDeadline(context.getDeadline());
         agentFacroty = new AgentFactory(context);
 
         System.out.println("Welcome to Agent simulator");

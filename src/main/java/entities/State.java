@@ -30,8 +30,6 @@ public class State implements Comparable{
     @Getter @Setter
     private double costSoFar;
 
-    @Getter @Setter
-    private static int deadline;
 
     public State(State prev, HurricaneNode currNode, Map<String, Integer> peopleInside, double time, int people, double costSoFar) {
         this.prev = prev;
@@ -53,13 +51,14 @@ public class State implements Comparable{
 
     public Boolean isGoalState(){
         SimulatorContext simulatorContext = Simulator.getContext();
+        if(simulatorContext.getDeadline() <= time){return true;}
         for (int i=1; i <= simulatorContext.getGraph().getNodeCount(); i++){
             HurricaneNode currNode = simulatorContext.getGraph().getNode(String.valueOf(i));
             if(peopleInNodes.get(String.valueOf(i)) >= 0 && !currNode.isShelter()){
                 return false;
             }
         }
-        return deadline <= time || people==0;
+        return people==0;
     }
 
     private Map<String, Integer> initializePeopleInside(SimulatorContext simulatorContext){

@@ -37,9 +37,19 @@ public abstract class SearchAgent extends Agent{
         }
         HurricaneNode nextNode = path.remove(0);
         HurricaneNode currNode = getCurrNode();
+        if (isOutOfTime(nextNode, currNode)) {
+            return null;
+        }
         setCurrNode(nextNode);
         return new AgentAction(nextNode,
                 calculateTraverseOperation(nextNode.getEdgeBetween(currNode)));
+    }
+
+    private boolean isOutOfTime(HurricaneNode nextNode, HurricaneNode currNode) {
+        if(nextNode.equals(currNode)){
+            return true;
+        }
+        return false;
     }
 
 
@@ -73,6 +83,14 @@ public abstract class SearchAgent extends Agent{
     }
 
     private State constructNewState(State s, Edge currentEdge, HurricaneNode node) {
+        if (s.getTime() + calculateTraverseSearchOperation(currentEdge, s.getPeople()) > context.getDeadline()){
+            return new State(s,
+                    s.getCurrNode(),
+                    s.getPeopleInNodes(),
+                    s.getTime() + calculateTraverseSearchOperation(currentEdge, s.getPeople()),
+                    s.getPeople(),
+                    s.getCostSoFar());
+        }
         Map<String, Integer> peopleMap = new HashMap<>(s.getPeopleInNodes());
         if (node.isShelter()) {
             peopleMap.put(node.getId(), node.getPeople() + s.getPeople());

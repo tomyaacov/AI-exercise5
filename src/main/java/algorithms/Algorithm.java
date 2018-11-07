@@ -122,33 +122,41 @@ public class Algorithm {
                 int sumPeople = 0;
                 for(int j = 0; j < wayToShelterStack.size()-1; j++){
                     if(wayToShelterStack.get(j).isShelter()){
-                        wayForShelterPeopleInNode.put(wayToShelterStack.get(j).getId(), wayForShelterPeopleInNode.get(wayToShelterStack.get(j)) + sumPeople);
+                        wayForShelterPeopleInNode.put(wayToShelterStack.get(j).getId(), wayForShelterPeopleInNode.get(wayToShelterStack.get(j).getId()) + sumPeople);
                     } else {
-                        sumPeople += wayForShelterPeopleInNode.get(wayToShelterStack.get(j));
+                        sumPeople += wayForShelterPeopleInNode.get(wayToShelterStack.get(j).getId());
                         wayForShelterPeopleInNode.put(wayToShelterStack.get(j).getId(), 0);
                     }
                 }
-                wayForShelterPeopleInNode.put(currNode.getId(), wayForShelterPeopleInNode.get(currNode) + sumPeople);
+                wayForShelterPeopleInNode.put(currNode.getId(), wayForShelterPeopleInNode.get(currNode.getId()) + sumPeople);
 
                 DijkstraOutput wayForShelter = dijkstra(simulatorContext, wayForShelterPeopleInNode, currNode, wayForShelterPeopleInNode.get(currNode.getId()));
 
-                double minDistToShelter = Double.MAX_VALUE;
-                HurricaneNode winnerShelter = null;
-                for (int j=1; j < wayForShelter.getDist().size(); j++){
-                    HurricaneNode shelterCandidate = simulatorContext.getGraph().getNode(String.valueOf(j));
-                    if (shelterCandidate.isShelter() && wayForShelter.getDist().get(j) < minDistToShelter){
-                        winnerShelter = shelterCandidate;
-                        minDistToShelter = wayForShelter.getDist().get(j);
-                    }
-                }
+                double minDistToShelter = getDistToClosestShelter(simulatorContext, wayForShelter);
 
                 if(wayForNodeWithPeople.getDist().get(i) + minDistToShelter > simulatorContext.getDeadline()-state.getTime()){
                     dead += state.getPeopleInNodes().get(currNode.getId());
                 }
             }
         }
+        double minDistToShelter = getDistToClosestShelter(simulatorContext, wayForNodeWithPeople);
+        if(minDistToShelter > simulatorContext.getDeadline()-state.getTime()){
+            dead += state.getPeople();
+        }
         return 100*dead;
     }
+
+    private static double getDistToClosestShelter(SimulatorContext simulatorContext, DijkstraOutput dijkstraOutput) {
+        double minDistToShelter = Double.MAX_VALUE;
+        for (int j = 1; j < dijkstraOutput.getDist().size(); j++) {
+            HurricaneNode shelterCandidate = simulatorContext.getGraph().getNode(String.valueOf(j));
+            if (shelterCandidate.isShelter() && dijkstraOutput.getDist().get(j) < minDistToShelter) {
+                minDistToShelter = dijkstraOutput.getDist().get(j);
+            }
+        }
+        return minDistToShelter;
+    }
+
     private static Map<String, Integer> initializePeopleInside(SimulatorContext simulatorContext){
         Map<String, Integer> peopleInNodes= new HashMap<>();
         HurricaneNode checkedNode;
