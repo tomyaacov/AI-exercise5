@@ -1,4 +1,6 @@
-# Introduction to Artificial - Intelligence Assignment 1
+# Introduction to Artificial Intelligence - Assignment 1
+Avi Rosen 303079511<br>
+Tom Yaacov 305578239<br>
 
 The heuristic we chose is:<br>
 100*(number of people we cant save)<br>
