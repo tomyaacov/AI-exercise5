@@ -5,13 +5,11 @@ import agent.AgentAction;
 import agent.AgentFactory;
 import agent.search.SearchAgent;
 import config.HurricaneNode;
-import entities.State;
 import lombok.Getter;
 import lombok.Setter;
 import org.graphstream.ui.view.Viewer;
 import parser.Parser;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -27,7 +25,7 @@ public class Simulator {
     private List<Agent> agents;
 
     @Getter @Setter
-    private AgentFactory agentFacroty;
+    private AgentFactory agentFactory;
 
     @Getter @Setter
     private Parser parser;
@@ -38,41 +36,81 @@ public class Simulator {
         Viewer view = context.getGraph().display();
         pickUpPeopleInInitPosition();
         play();
+        wrapUp();
+
+    }
+
+    private void wrapUp() {
+        PressToSeeNextMove("Simulation over. press to see agents performance measure");
+        printPerformanceMeasure();
     }
 
     private void play() {
+        int i = 0;
         while(isGameOn(context.getTime())){
-            for (int i = 0; i < agents.size(); i++ ){
-                Agent agent = agents.get(i);
-                AgentAction action = agent.doNextAction(context.getTime());
-
-                if(action == null){
-                    context.getGraph().setAttribute("ui.title",  "time is UP. Agent " + (i+1) + " last opertaion failed");
-                    return;
-                }
-                context.setTime(context.getTime() + action.getTime());
-                agent.doActionInNode();
-                setAgentState(i, agent, context.getTime());
-
-                //TODO may remove
-                System.out.println("press to see next move");
-
-                Scanner input = new Scanner(System.in);
-                input.next();
+            Agent agent = agents.get(i);
+            AgentAction action = agent.doNextAction(context.getTime());
+            if(action == null){
+                context.getGraph().setAttribute("ui.title",  "time is UP. Agent " + (i+1) + " last opertaion failed");
+                context.getGraph().display();
+                return;
             }
+            context.setTime(context.getTime() + action.getTime());
+            agent.doActionInNode();
+            setAgentState(i, agent, context.getTime());
+            //PressToSeeNextMove("press to continue");
+            i = updateI(i);
         }
+        if (isGoalAchieved()){
+            context.getGraph().setAttribute("ui.title",  "goal achieved!");
+            context.getGraph().display();
+        } else {
+            context.getGraph().setAttribute("ui.title",  "time is UP.");
+            context.getGraph().display();
+        }
+        
+
+    }
+
+    private void PressToSeeNextMove(String s) {
+        System.out.println(s);
+        Scanner input = new Scanner(System.in);
+        input.next();
+    }
+
+    private int updateI(int i) {
+        i++;
+        if(i == agents.size()){
+            i = 0;
+        }
+        return i;
+    }
+
+    private void printPerformanceMeasure() {
         for (int i = 0; i < agents.size(); i++ ){
             Agent agent = agents.get(i);
             if(agent instanceof SearchAgent){
                 System.out.println("Agent " + (i+1) + " performance measure is " + ((SearchAgent) agent).calculatePerformanceMeasure());
             }
         }
-        context.getGraph().setAttribute("ui.title",  "time is UP.");
-
     }
 
     private boolean isGameOn(double time) {
+        return isLeftTime(time) && !isGoalAchieved();
+    }
+
+    private boolean isLeftTime(double time) {
         return time < context.getDeadline();
+    }
+
+    private boolean isGoalAchieved() {
+        for (int i = 1; i <= context.getGraph().getNodeCount(); i++){
+            HurricaneNode node = context.getGraph().getNode(String.valueOf(i));
+            if (!node.isShelter() && node.getPeople() > 0){
+                return false;
+            }
+        }
+        return ! agents.stream().anyMatch(agent -> agent.getPeople()>0);
     }
 
     private void pickUpPeopleInInitPosition() {
@@ -102,13 +140,12 @@ public class Simulator {
 
     private void initialize(){
 
-        //TODO any spring like dependency injection?
         Scanner input = new Scanner(System.in);
         agents = new LinkedList<>();
         parser = new Parser();
         context = initializeGraph();
         context.setTime(0);
-        agentFacroty = new AgentFactory(context);
+        agentFactory = new AgentFactory(context);
 
         System.out.println("Welcome to Agent simulator");
         System.out.println("Please enter a value for K constant:");
@@ -130,7 +167,7 @@ public class Simulator {
         System.out.println("Please specify Agent " + (i+1) +
                 " initial position (number in between 1 to " + context.getGraph().getNodeCount() +"):");
         int position = input.nextInt();
-        Agent agent = agentFacroty.getAgent(type);
+        Agent agent = agentFactory.getAgent(type);
         agent.setCurrNode(context.getGraph().getNode(String.valueOf(position)));
         agents.add(agent);
     }

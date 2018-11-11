@@ -119,12 +119,12 @@ public class Parser {
     }
 
 
-//TODO del
-    public static void main(String[] args) throws IOException {
-
-        Parser p = new Parser();
-        SimulatorContext s =p.parseFile("src\\main\\resources\\graph");
-        s.getGraph().display();
-        HurricaneGraph.setEdgeBlock(s.getGraph().getEdge("1-2"),true);
-    }
+//
+//    public static void main(String[] args) throws IOException {
+//
+//        Parser p = new Parser();
+//        SimulatorContext s =p.parseFile("src\\main\\resources\\graph");
+//        s.getGraph().display();
+//        HurricaneGraph.setEdgeBlock(s.getGraph().getEdge("1-2"),true);
+//    }
 }

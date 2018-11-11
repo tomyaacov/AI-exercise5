@@ -5,7 +5,6 @@ import config.HurricaneNode;
 import entities.State;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.SingleGraph;
 
 import org.graphstream.ui.view.Viewer;
 import parser.Parser;
@@ -14,14 +13,6 @@ import simulator.SimulatorContext;
 
 import java.io.File;
 import java.util.*;
-
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.NodeFactory;
-import org.graphstream.graph.implementations.AbstractGraph;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.graph.implementations.SingleNode;
-import org.graphstream.graph.implementations.AbstractGraph;
-import org.graphstream.graph.implementations.SingleNode;
 
 public class Algorithm {
 
@@ -110,25 +101,7 @@ public class Algorithm {
         for(int i = 1; i<=simulatorContext.getGraph().getNodeCount(); i++){
             HurricaneNode currNode = simulatorContext.getGraph().getNode(String.valueOf(i));
             if(!currNode.isShelter() && state.getPeopleInNodes().get(String.valueOf(i)) > 0){
-                Map<String, Integer> wayForShelterPeopleInNode = new HashMap<>(state.getPeopleInNodes());
-                ArrayList<HurricaneNode> wayToShelterStack = new ArrayList<>();
-                HurricaneNode traverse = currNode;
-                while (wayForNodeWithPeople.getPrev().get(Integer.valueOf(traverse.getId())) != null){
-                    wayToShelterStack.add(0, traverse);
-                    traverse = wayForNodeWithPeople.getPrev().get(Integer.valueOf(traverse.getId()));
-                }
-                wayToShelterStack.add(0, traverse);
-
-                int sumPeople = 0;
-                for(int j = 0; j < wayToShelterStack.size()-1; j++){
-                    if(wayToShelterStack.get(j).isShelter()){
-                        wayForShelterPeopleInNode.put(wayToShelterStack.get(j).getId(), wayForShelterPeopleInNode.get(wayToShelterStack.get(j).getId()) + sumPeople);
-                    } else {
-                        sumPeople += wayForShelterPeopleInNode.get(wayToShelterStack.get(j).getId());
-                        wayForShelterPeopleInNode.put(wayToShelterStack.get(j).getId(), 0);
-                    }
-                }
-                wayForShelterPeopleInNode.put(currNode.getId(), wayForShelterPeopleInNode.get(currNode.getId()) + sumPeople);
+                Map<String, Integer> wayForShelterPeopleInNode = getUpdatedPeopleInNodesMap(state, wayForNodeWithPeople, currNode);
 
                 DijkstraOutput wayForShelter = dijkstra(simulatorContext, wayForShelterPeopleInNode, currNode, wayForShelterPeopleInNode.get(currNode.getId()));
 
@@ -144,6 +117,29 @@ public class Algorithm {
             dead += state.getPeople();
         }
         return 100*dead;
+    }
+
+    private static Map<String, Integer> getUpdatedPeopleInNodesMap(State state, DijkstraOutput wayForNodeWithPeople, HurricaneNode currNode) {
+        Map<String, Integer> wayForShelterPeopleInNode = new HashMap<>(state.getPeopleInNodes());
+        ArrayList<HurricaneNode> wayToShelterStack = new ArrayList<>();
+        HurricaneNode traverse = currNode;
+        while (wayForNodeWithPeople.getPrev().get(Integer.valueOf(traverse.getId())) != null){
+            wayToShelterStack.add(0, traverse);
+            traverse = wayForNodeWithPeople.getPrev().get(Integer.valueOf(traverse.getId()));
+        }
+        wayToShelterStack.add(0, traverse);
+
+        int sumPeople = 0;
+        for(int j = 0; j < wayToShelterStack.size()-1; j++){
+            if(wayToShelterStack.get(j).isShelter()){
+                wayForShelterPeopleInNode.put(wayToShelterStack.get(j).getId(), wayForShelterPeopleInNode.get(wayToShelterStack.get(j).getId()) + sumPeople);
+            } else {
+                sumPeople += wayForShelterPeopleInNode.get(wayToShelterStack.get(j).getId());
+                wayForShelterPeopleInNode.put(wayToShelterStack.get(j).getId(), 0);
+            }
+        }
+        wayForShelterPeopleInNode.put(currNode.getId(), wayForShelterPeopleInNode.get(currNode.getId()) + sumPeople);
+        return wayForShelterPeopleInNode;
     }
 
     private static double getDistToClosestShelter(SimulatorContext simulatorContext, DijkstraOutput dijkstraOutput) {
