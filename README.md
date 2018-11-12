@@ -9,9 +9,8 @@ We compute it in the following manner:<br>
 for each node n with people (that isn't a shelter):<br>
 1. calculate the minimum distance from current node to n using dijkstra.<br>
 2. calculate the minimum distance from n to closest shelter, given an updated graph representation (considering the path we talk at step 1) using dijkstra.<br>
-<br>
 We used GraphStream open source package for graph representaion.
-<br>
+<br><br>
 
 Comparing the performance of the three agents given k=1, start=V1 we got the following results:<br>
 
