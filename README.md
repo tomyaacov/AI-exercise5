@@ -1,8 +1,10 @@
 # Introduction to Artificial Intelligence - Assignment 1
 Avi Rosen 303079511<br>
 Tom Yaacov 305578239<br>
-
-<br><br>
+<br>
+The assignment is written in java as a maven project.
+<br>
+<br>
 We used GraphStream open source package for graph representaion.
 <br><br>
 
