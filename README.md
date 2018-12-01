@@ -1,4 +1,4 @@
-# Introduction to Artificial Intelligence - Assignment 1
+# Introduction to Artificial Intelligence - Assignment 2!
 Avi Rosen 303079511<br>
 Tom Yaacov 305578239<br>
 <br>
