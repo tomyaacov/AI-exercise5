@@ -8,13 +8,13 @@ import org.graphstream.graph.implementations.SingleNode;
 public class HurricaneNode extends SingleNode {
 
     @Getter @Setter
-    private double floodingProbability;
+    private double floodingProb;
 
     public HurricaneNode(AbstractGraph graph, String id) {
         super(graph, id);
     }
 
     public String toString(){
-        return "node id:" + getId() ;
+        return "node id:" + getId() + " ,flooding: " + getFloodingProb();
     }
 }

@@ -1,16 +1,13 @@
 package main;
 
 import config.HurricaneGraph;
-import config.HurricaneNode;
 import lombok.Getter;
 import lombok.Setter;
 import org.graphstream.ui.view.Viewer;
 import parser.Parser;
-import simulator.Simulator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Main {

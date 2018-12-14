@@ -37,11 +37,15 @@ public class Parser {
         double floodingProbability = Double.valueOf(vertexData[3]);
 
         HurricaneNode currNode = graph.getNode(vertexId);
-        currNode.setFloodingProbability(floodingProbability);
+        currNode.setFloodingProb(floodingProbability);
+        setVertexAttributes(floodingProbability, currNode);
     }
 
+    private void setVertexAttributes(double flooding, HurricaneNode v) {
+        v.addAttribute("ui.label", v);
+    }
 
-    private void parseEdges(BufferedReader reader, Graph graph) throws IOException {
+        private void parseEdges(BufferedReader reader, Graph graph) throws IOException {
         String line;
         while ((line = reader.readLine()) != null && line.startsWith("E")) {
             parseEdge(graph, line);

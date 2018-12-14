@@ -51,18 +51,6 @@ public class HurricaneGraph extends SingleGraph {
         }
     }
 
-    public HurricaneGraph clone(){
-        HurricaneGraph cloneGraph = (HurricaneGraph) Graphs.clone(this);
-        Iterator<HurricaneNode> it = this.getNodeIterator();
-        while (it.hasNext()){
-            HurricaneNode thisNode = it.next();
-            HurricaneNode cloneNode = cloneGraph.getNode(thisNode.getId());
-            cloneNode.setPeople(thisNode.getPeople());
-            cloneNode.setShelter(thisNode.isShelter());
-        }
-        return cloneGraph;
-    }
-
 
 
 }
