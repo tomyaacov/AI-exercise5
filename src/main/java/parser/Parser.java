@@ -4,7 +4,6 @@ import config.HurricaneGraph;
 import config.HurricaneNode;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import simulator.SimulatorContext;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
