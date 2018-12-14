@@ -22,6 +22,9 @@ public abstract class Variable {
     public abstract double pi(List<Evidence> evidences);
 
     public String toStringPi(List<Evidence> evidences){
+        if (evidences.isEmpty()){
+            return "P(" + this.getClass().getSimpleName() + " " + id + ") = " + pi(evidences);
+        }
         String evidencesString = getEvidenceString(evidences);
         return "P(" + this.getClass().getSimpleName() + " " + id + "|" + evidencesString + ") = " + pi(evidences);
     }
@@ -29,9 +32,9 @@ public abstract class Variable {
     private String getEvidenceString(List<Evidence> evidences) {
         String evidencesString = "";
         for(Evidence e : evidences){
-            evidencesString += e;
+            evidencesString += (e + ", ");
         }
-        return evidencesString;
+        return evidencesString.substring(0, evidencesString.length() - 2);
     }
 
     public  double qi(List<Evidence> evidences){
@@ -39,6 +42,9 @@ public abstract class Variable {
     }
 
     public String toStringQi(List<Evidence> evidences){
+        if (evidences.isEmpty()){
+            return "P(not " + this.getClass().getSimpleName() + " " + id + ") = " + qi(evidences);
+        }
         String evidencesString = getEvidenceString(evidences);
         return "P(not " + this.getClass().getSimpleName() + " " + id + "|" + evidencesString + ") = " + qi(evidences);
     }
