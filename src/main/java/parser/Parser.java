@@ -12,19 +12,15 @@ import java.io.IOException;
 
 public class Parser {
 
-    public SimulatorContext parseFile(String file) throws IOException {
+    public HurricaneGraph parseFile(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         HurricaneGraph graph = configGraph();
 
         parseVerticesNumber(reader.readLine(), graph);
-        parseEdges(reader, graph);
         parseVertices(reader, graph);
-        int deadline = parseDeadline(reader.readLine(), graph);
+        parseEdges(reader, graph);
 
-        SimulatorContext context = new SimulatorContext();
-        context.setGraph(graph);
-        context.setDeadline(deadline);
-        return context;
+        return graph;
     }
 
     private void parseVertices(BufferedReader reader, Graph graph) throws IOException {
@@ -38,23 +34,18 @@ public class Parser {
         vertexToParse = clearComments(vertexToParse);
         String[] vertexData = vertexToParse.split(" ");
         String vertexId = vertexData[1];
-        boolean shelter = vertexData[2].toLowerCase().equals("s");
-        int people = vertexData.length > 3 ? Integer.parseInt(vertexData[3]) : 0;
+        double floodingProbability = Double.valueOf(vertexData[3]);
 
         HurricaneNode currNode = graph.getNode(vertexId);
-        setNodeAttributes(shelter, people, currNode);
+        currNode.setFloodingProb(floodingProbability);
+        setVertexAttributes(floodingProbability, currNode);
     }
 
-    private void setNodeAttributes(boolean shelter, int people, HurricaneNode currNode) {
-        currNode.setPeople(people);
-        currNode.setShelter(shelter);
-        currNode.addAttribute("ui.label", currNode);
-        if (shelter){
-            currNode.addAttribute("ui.class", "shelter");
-        }
+    private void setVertexAttributes(double flooding, HurricaneNode v) {
+        v.addAttribute("ui.label", v);
     }
 
-    private void parseEdges(BufferedReader reader, Graph graph) throws IOException {
+        private void parseEdges(BufferedReader reader, Graph graph) throws IOException {
         String line;
         while ((line = reader.readLine()) != null && line.startsWith("E")) {
             parseEdge(graph, line);
@@ -112,18 +103,13 @@ public class Parser {
         }
     }
 
-    private int parseDeadline(String deadlineToParse, Graph graph){
-        deadlineToParse = clearComments(deadlineToParse);
-        return Integer.valueOf(deadlineToParse.split(" ")[1]);
+
+
+
+    public static void main(String[] args) throws IOException {
+
+        Parser p = new Parser();
+        HurricaneGraph s =p.parseFile("src\\main\\resources\\graph");
+        s.display();
     }
-
-
-//
-//    public static void main(String[] args) throws IOException {
-//
-//        Parser p = new Parser();
-//        SimulatorContext s =p.parseFile("src\\main\\resources\\graph");
-//        s.getGraph().display();
-//        HurricaneGraph.setEdgeBlock(s.getGraph().getEdge("1-2"),true);
-//    }
 }
