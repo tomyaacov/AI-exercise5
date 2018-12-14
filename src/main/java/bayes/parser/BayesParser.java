@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Parser {
+public class BayesParser {
 
     public BayesNetwork initBayes(HurricaneGraph graph){
 
@@ -87,7 +87,7 @@ public class Parser {
     public static void main(String[] args) throws IOException {
         parser.Parser p = new parser.Parser();
         HurricaneGraph s =p.parseFile("src\\main\\resources\\graph".replace("\\", File.separator));
-        Parser ps = new Parser();
+        BayesParser ps = new BayesParser();
         BayesNetwork bayes= ps.initBayes(s);
 
         System.out.println(bayes);    }
