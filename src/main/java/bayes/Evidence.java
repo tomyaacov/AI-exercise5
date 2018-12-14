@@ -11,4 +11,9 @@ public class Evidence {
 
     @Getter @Setter
     private boolean value;
+
+    public Evidence(Variable var, boolean value) {
+        this.var = var;
+        this.value = value;
+    }
 }
