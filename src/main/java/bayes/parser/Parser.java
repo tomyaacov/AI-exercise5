@@ -49,7 +49,6 @@ public class Parser {
     private Flooding initFloodVariable(HurricaneNode node) {
         Flooding currFlooding = new Flooding(node.getFloodingProb());
         currFlooding.setId(node.getId());
-        currFlooding.setParents(null);
         return currFlooding;
     }
 
@@ -89,8 +88,7 @@ public class Parser {
         HurricaneGraph s =p.parseFile("src\\main\\resources\\graph");
         Parser ps = new Parser();
         BayesNetwork bayes= ps.initBayes(s);
-        System.out.println();
 
-    }
+        System.out.println(bayes);    }
 
 }
