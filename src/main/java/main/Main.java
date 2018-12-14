@@ -21,7 +21,7 @@ public class Main {
     @Getter @Setter
     HurricaneGraph graph;
 
-    //TODO: add bayes network and avidence list
+    //TODO: add bayes network and evidence list
 
     public void run(){
         initialize();
@@ -31,9 +31,15 @@ public class Main {
     }
 
     private void runMenu() {
+        Scanner input = new Scanner(System.in);
         while(true) {
+            printMenu();
         }
         }
+
+    private void printMenu() {
+        System.out.println("Please choose from the following options\n1.Reset evidence list to empty.\n2.Add piece of evidence to evidence list.\n3.Do probabilistic reasoning and report the results.\n4.Quit.");
+    }
 
 
     private void initialize(){
@@ -43,7 +49,7 @@ public class Main {
         graph = initializeGraph();
         //TODO: initialize bayes network and evidence list here
 
-        System.out.println("Welcome to Assignment 4 menu");
+        printMenu();
     }
 
 
@@ -51,7 +57,7 @@ public class Main {
         try {
             return parser.parseFile("src.main.resources.graph".replace(".", File.separator));
         } catch (IOException e) {
-            System.err.println("parsing 'graph.txt' file encountered a problem. Check for valid input");
+            printMenu();
             System.exit(1);
         }
         return null;
@@ -62,3 +68,4 @@ public class Main {
         s.run();
     }
 }
+
