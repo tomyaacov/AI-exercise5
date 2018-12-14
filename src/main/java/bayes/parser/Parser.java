@@ -9,6 +9,7 @@ import config.HurricaneGraph;
 import config.HurricaneNode;
 import org.graphstream.graph.Edge;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -85,7 +86,7 @@ public class Parser {
 
     public static void main(String[] args) throws IOException {
         parser.Parser p = new parser.Parser();
-        HurricaneGraph s =p.parseFile("src\\main\\resources\\graph");
+        HurricaneGraph s =p.parseFile("src\\main\\resources\\graph".replace("\\", File.separator));
         Parser ps = new Parser();
         BayesNetwork bayes= ps.initBayes(s);
 
