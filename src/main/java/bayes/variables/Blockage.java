@@ -17,7 +17,7 @@ public class Blockage extends Variable{
     private double noisyPEvacuees;
 
     public Blockage(int edgeWeight) {
-        this.noisyPBlockage = 0.6*1/edgeWeight;
+        this.noisyPBlockage = 0.4*1/edgeWeight;
         this.noisyPEvacuees = edgeWeight > 4 ? 0.8 : 0.4;//TODO: check if greater or equal...
     }
 
@@ -28,7 +28,8 @@ public class Blockage extends Variable{
         } else {
             double noisyPA = evidences.get(0).isValue() ? noisyPBlockage : 1;
             double noisyPB = evidences.get(1).isValue() ? noisyPBlockage : 1;
-            return 1 - (noisyPA*noisyPB);
+            double prob =  1 - (noisyPA*noisyPB);
+            return prob == 0 ? 0.001 : prob;
         }
     }
     public static void main(String[] args) {

@@ -22,7 +22,7 @@ public class Evacuees extends Variable{
                 Blockage b = (Blockage)e.getVar();
                 noisyProduct *= e.isValue() ? b.getNoisyPEvacuees() : 1;
             }
-            return 1 - noisyProduct;
+            return 1 - noisyProduct == 0 ? 0.001 : 1 - noisyProduct;
         }
     }
 
