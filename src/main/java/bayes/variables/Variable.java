@@ -68,14 +68,49 @@ public abstract class Variable {
         return recToString(new ArrayList<>(), 0);
     }
 
-    public static void main(String[] args) {
-        Evacuees evacuees = new Evacuees();
-        evacuees.setId("1");
-        List<Variable> l = new ArrayList<>(1);
-        Blockage b = new Blockage(1);
-        b.setId("1");
-        l.add(0, b);
-        evacuees.setParents(l);
-        System.out.println(evacuees);
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + id.hashCode();
+        result = 31 * result + getClass().getSimpleName().hashCode();
+        return result;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof Variable)) {
+            return false;
+        }
+
+        if (! getClass().getSimpleName().equals((other.getClass().getSimpleName()))){
+            return false;
+        }
+        return getId().equals(((Variable) other).getId());
+    }
+
+
+    public static void main(String[] args) {
+        Variable a = new Flooding(2);
+        a.setId("1");
+        Variable b = new Flooding(3);
+        b.setId("1");
+        System.out.println(a.equals(b));
+        System.out.println(a.hashCode()==b.hashCode());
+    }
+
+
+//    public static void main(String[] args) {
+//        Evacuees evacuees = new Evacuees();
+//        evacuees.setId("1");
+//        List<Variable> l = new ArrayList<>(1);
+//        Blockage b = new Blockage(1);
+//        b.setId("1");
+//        l.add(0, b);
+//        evacuees.setParents(l);
+//        System.out.println(evacuees);
+//    }
 }

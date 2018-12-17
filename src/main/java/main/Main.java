@@ -3,8 +3,11 @@ package main;
 import bayes.BayesNetwork;
 import bayes.Evidence;
 import bayes.variables.Blockage;
+import bayes.variables.Evacuees;
+import bayes.variables.Flooding;
 import bayes.variables.Variable;
 import config.HurricaneGraph;
+import inference.EnumerationInference;
 import lombok.Getter;
 import lombok.Setter;
 import org.graphstream.ui.view.Viewer;
@@ -14,10 +17,20 @@ import bayes.parser.BayesParser;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
+
+    private static final String PROBABILITY_INFERENCE= "Please enter query type:\n" +
+            "1. What is the probability that each of the vertices contains evacuees?\n" +
+            "2. What is the probability that each of the vertices is flooded?\n" +
+            "3. What is the probability that each of the edges is blocked?\n" +
+            "4, What is the probability that a certain path (set of edges) is free from blockages? (Note that the distributions of blockages in edges are NOT necessarily independent.)\n" +
+            "5. What is the path from a given location to a goal that has the highest probability of being free from blockages? (bonus)";
+
 
     @Getter @Setter
     private Parser parser;
@@ -82,7 +95,7 @@ public class Main {
 
     private HurricaneGraph initializeGraph() {
         try {
-            return parser.parseFile("src.main.resources.graph".replace(".", File.separator));
+            return parser.parseFile("src.main.resources.graph2".replace(".", File.separator));
         } catch (IOException e) {
             printMenu();
             System.exit(1);
@@ -110,6 +123,51 @@ public class Main {
         System.out.println("Resulting Evidence List:\n" + evidenceList);
     }
 
+    private void doProbabilisticReasoning(){
+//        Variable x=bayesNetwork.getVariables().get(0);
+//        x= bayesNetwork.getVariables().get(3);
+//        double p=EnumerationInference.ask(x, evidenceList, bayesNetwork);
+//        System.out.println(p);
+
+        Scanner input = new Scanner(System.in);
+        System.out.println(PROBABILITY_INFERENCE);
+
+        int typeNum = input.nextInt();
+        if (typeNum == 1) {
+            List<Variable> evacuees = getEvacueesVariables();
+            doConjunctiveQueries(evacuees);
+        } else if (typeNum == 2) {
+            List<Variable> floodings = getFloodingVariables();
+            doConjunctiveQueries(floodings);
+        } else if (typeNum == 3) {
+            List<Variable> blocks = getBlocksVariables();
+            doConjunctiveQueries(blocks);
+        }
+
+    }
+
+    private List<Variable> getBlocksVariables() {
+        return bayesNetwork.getVariables().stream()
+                        .filter(variable -> variable instanceof Blockage)
+                        .collect(Collectors.toList());
+    }
+
+    private void doConjunctiveQueries(List<Variable> variables) {
+        double prob = 1;
+        List<Evidence> evidences = new LinkedList<>(evidenceList);
+        for (Variable var : variables) {
+            prob *= EnumerationInference.ask(var, evidences, bayesNetwork);
+            evidences.add(new Evidence(var, true));
+        }
+        System.out.println(prob);
+    }
+
+    private List<Variable> getFloodingVariables() {
+        return bayesNetwork.getVariables().stream()
+                        .filter(variable -> variable instanceof Flooding)
+                        .collect(Collectors.toList());
+    }
+
     private String getTypeString(int type){
         switch (type){
             case 1:
@@ -132,12 +190,18 @@ public class Main {
         throw new java.lang.Error("Invalid edge/vertex id");
     }
 
-    private void doProbabilisticReasoning(){
-        return;
+    private List<Variable> getEvacueesVariables() {
+        return bayesNetwork.getVariables().stream()
+                            .filter(variable -> variable instanceof Evacuees)
+                            .collect(Collectors.toList());
     }
 
     public static void main(String[] args) {
+//        System.out.println(f(new LinkedList<>()));
+
+
         Main s= new Main();
+
         s.run();
     }
 }
