@@ -68,6 +68,12 @@ public abstract class Variable {
         return recToString(new ArrayList<>(), 0);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        Variable vObj = (Variable)obj;
+        return this.id.equals(vObj.getId()) && this.getClass().getSimpleName().equals(vObj.getClass().getSimpleName());
+    }
+
     public static void main(String[] args) {
         Evacuees evacuees = new Evacuees();
         evacuees.setId("1");

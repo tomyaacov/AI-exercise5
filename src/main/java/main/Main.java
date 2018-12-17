@@ -102,6 +102,12 @@ public class Main {
         }
         String id = input.next();
         Variable v = getVariable(typeString, id);
+        for (Evidence e : evidenceList){
+            if (e.getVar().equals(v)){
+                System.out.println("Variable already exists in evidence list");
+                return;
+            }
+        }
         System.out.println("Please enter assignment:\n0.false\n1.true");
         int assignment = input.nextInt();
         boolean bolAssignment = assignment==1;
