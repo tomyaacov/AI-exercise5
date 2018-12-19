@@ -95,7 +95,7 @@ public class Main {
 
     private HurricaneGraph initializeGraph() {
         try {
-            return parser.parseFile("src.main.resources.graph2".replace(".", File.separator));
+            return parser.parseFile("src.main.resources.graph".replace(".", File.separator));
         } catch (IOException e) {
             printMenu();
             System.exit(1);
@@ -163,7 +163,9 @@ public class Main {
         List<Evidence> evidences = new LinkedList<>(evidenceList);
         for (Variable var : variables) {
             prob *= EnumerationInference.ask(var, evidences, bayesNetwork);
-            evidences.add(new Evidence(var, true));
+            if (! evidences.stream().anyMatch(evidence -> evidence.getVar().equals(var))){
+                evidences.add(new Evidence(var, true));
+            }
         }
         System.out.println(prob);
     }
