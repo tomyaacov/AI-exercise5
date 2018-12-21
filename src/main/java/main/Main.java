@@ -10,16 +10,14 @@ import config.HurricaneGraph;
 import inference.EnumerationInference;
 import lombok.Getter;
 import lombok.Setter;
+import org.graphstream.graph.Edge;
 import org.graphstream.ui.view.Viewer;
 import parser.Parser;
 import bayes.parser.BayesParser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -148,8 +146,55 @@ public class Main {
         } else if (typeNum == 3) {
             List<Variable> blocks = getBlocksVariables();
             doConjunctiveQueries(blocks);
+        } else if (typeNum == 4) {
+            System.out.println("Please enter path (example - 2413)");
+            String path = input.next();
+            List<String> pathList = Arrays.asList(path.split(""));
+            List<Blockage> blockageList = new ArrayList<>();
+            for(int i = 0; i < pathList.size()-1; i++){
+                String id1 = pathList.get(i);
+                String id2 = pathList.get(i+1);
+                Edge e = getEdge(id1, id2);
+                if (e == null){
+                    System.out.println("no edge between " + id1 + " and " + id2);
+                    return;
+                }
+                Blockage b = getBlockage(e.getId());
+                blockageList.add(b);
+            }
+            doConjunctiveQueriesBlockage(blockageList);
+
         }
 
+    }
+
+    private void doConjunctiveQueriesBlockage(List<Blockage> variables) {
+        double prob = 1;
+        List<Evidence> evidences = new LinkedList<>(evidenceList);
+        for (Variable var : variables) {
+            prob *= EnumerationInference.ask(var, evidences, bayesNetwork);
+            if (! evidences.stream().anyMatch(evidence -> evidence.getVar().equals(var))){
+                evidences.add(new Evidence(var, false));
+            }
+        }
+        System.out.println(prob);
+    }
+
+    private Blockage getBlockage(String id){
+        for (Variable v : bayesNetwork.getVariables()){
+            if (v instanceof Blockage && v.getId().equals(id)){
+                return (Blockage)v;
+            }
+        }
+        return null;
+    }
+
+    private Edge getEdge(String id1, String id2) {
+        Edge e = graph.getEdge(id1 + "-" + id2);
+        if(e == null){
+            return graph.getEdge(id2 + "-" + id1);
+        }
+        return e;
     }
 
     private List<Variable> getBlocksVariables() {
@@ -212,5 +257,6 @@ public class Main {
 
         s.run();
     }
+
 }
 
