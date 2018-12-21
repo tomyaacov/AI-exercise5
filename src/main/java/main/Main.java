@@ -208,6 +208,10 @@ public class Main {
         List<Evidence> evidences = new LinkedList<>(evidenceList);
         for (Variable var : variables) {
             prob *= EnumerationInference.ask(var, evidences, bayesNetwork);
+            if (prob == 0){
+                System.out.println(0);
+                return;
+            }
             if (! evidences.stream().anyMatch(evidence -> evidence.getVar().equals(var))){
                 evidences.add(new Evidence(var, true));
             }
