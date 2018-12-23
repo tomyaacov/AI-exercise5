@@ -14,7 +14,7 @@ Our program constructs the network in 2 main steps:<br>
 2. Bayes parser - The network variables are initialized from the graph generated in the previous step and are added to the network.
 
 Reasoning:<br>
-Our reasonning algorithm uses the Enumeration algorithm. the algorithm computes the probability of a variable given a list of evidences and the network. I order to infer over multiple variables out program is using conjunctive queries chain rule and infer separately over the given variable and changing list of evidences.
+Our reasonning algorithm uses the Enumeration algorithm. the algorithm computes the probability of a variable given a list of evidences and the network. I order to infer over multiple variables our program is using conjunctive queries chain rule and infer separately over the given variable and a changing list of evidences.
 <br>
 <br>
 <u>Example:</u><br>
