@@ -1,25 +1,27 @@
-# Introduction to Artificial Intelligence - Assignment 2!
+# Introduction to Artificial Intelligence - Assignment 4
 Avi Rosen 303079511<br>
 Tom Yaacov 305578239<br>
 <br>
 The assignment is written in java as a maven project.
 <br>
-<br>
 We used GraphStream open source package for graph representaion.
 <br><br>
 
-The heuristic we chose is:<br>
-100*(number of people we cant save)<br>
-We compute it in the following manner:<br>
+<u>Bayes Network Construction and Reasoning:</u><br>
+Construction:<br>
+Our program constructs the network in 2 main steps:<br>
+1. Graph parser - the graph is being parsed in the same manner as the previous assignments (except some minor changes in order to keep probabilities of the network). 
+2. Bayes parser - The network variables are initialized from the graph generated in the previous step and are added to the network.
+
+Reasoning:<br>
+Our reasonning algorithm uses the Enumeration algorithm. the algorithm computes the probability of a variable given a list of evidences and the network. I order to infer over multiple variables out program is using conjunctive queries chain rule and infer separately over the given variable and changing list of evidences.
 <br>
-for each node n with people (that isn't a shelter):<br>
-1. calculate the minimum distance from current node to n using dijkstra.<br>
-2. calculate the minimum distance from n to closest shelter, given an updated graph representation (considering the path we talk at step 1) using dijkstra.
+<br>
+<u>Example:</u><br>
 
-Comparing the performance of the three agents given k=1, start=V1 we got the following results:<br>
+<br>
+<br>
+<u>Running the program:</u><br>
+In order to run our program run the Main class, and you'll get the starting menu as described in the assignment description.
+<br>
 
-| f | -1 | -100 | -10000 |
-| :---: | :---: | :---: | :---: |
-| Greedy | 8 | -91 | -9991 |
-| A* | 11 | -88 | -9988 |
-| RTA*(2) | 5 | -94 | -9994 |
