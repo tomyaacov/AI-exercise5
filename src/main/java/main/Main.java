@@ -11,6 +11,7 @@ import inference.EnumerationInference;
 import lombok.Getter;
 import lombok.Setter;
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.Node;
 import org.graphstream.ui.view.Viewer;
 import parser.Parser;
 import bayes.parser.BayesParser;
@@ -147,25 +148,64 @@ public class Main {
             List<Variable> blocks = getBlocksVariables();
             doConjunctiveQueries(blocks);
         } else if (typeNum == 4) {
-            System.out.println("Please enter path (example - 2413)");
-            String path = input.next();
+            String path = getPathString(input);
             List<String> pathList = Arrays.asList(path.split(""));
-            List<Blockage> blockageList = new ArrayList<>();
-            for(int i = 0; i < pathList.size()-1; i++){
-                String id1 = pathList.get(i);
-                String id2 = pathList.get(i+1);
-                Edge e = getEdge(id1, id2);
-                if (e == null){
-                    System.out.println("no edge between " + id1 + " and " + id2);
-                    return;
-                }
-                Blockage b = getBlockage(e.getId());
-                blockageList.add(b);
-            }
+            List<Blockage> blockageList = createBlockagesList(pathList);
+            if (blockageList == null) return;
             doConjunctiveQueriesBlockage(blockageList);
-
+        } else if (typeNum == 5){
+            System.out.println("Please enter start node");
+            int start = input.nextInt();
+            System.out.println("Please enter goal node");
+            int end = input.nextInt();
+            finMinProbBlockagePath(String.valueOf(start), String.valueOf(end), "");
         }
 
+    }
+
+    private void finMinProbBlockagePath(String start, String end, String currentPath){
+        if (currentPath.length() >= graph.getNodeCount()){
+            return;
+        }
+        if (start.equals(end)){
+            System.out.println(currentPath+start);
+            List<String> pathList = Arrays.asList((currentPath+start).split(""));
+            List<Blockage> blockageList = createBlockagesList(pathList);
+            doConjunctiveQueriesBlockage(blockageList);
+            return;
+        }
+        for(Node v : graph){
+            Edge e = getEdge(start, v.getId());
+            if (e != null){
+                if (currentPath.length() > 0){
+                    if (v.getId().equals(currentPath.substring(currentPath.length() - 1))){
+                        continue;
+                    }
+                }
+                finMinProbBlockagePath(v.getId(), end, currentPath+start);
+            }
+        }
+    }
+
+    private List<Blockage> createBlockagesList(List<String> pathList) {
+        List<Blockage> blockageList = new ArrayList<>();
+        for(int i = 0; i < pathList.size()-1; i++){
+            String id1 = pathList.get(i);
+            String id2 = pathList.get(i+1);
+            Edge e = getEdge(id1, id2);
+            if (e == null){
+                System.out.println("no edge between " + id1 + " and " + id2);
+                return null;
+            }
+            Blockage b = getBlockage(e.getId());
+            blockageList.add(b);
+        }
+        return blockageList;
+    }
+
+    private String getPathString(Scanner input) {
+        System.out.println("Please enter path (example - 2413)");
+        return input.next();
     }
 
     private void doConjunctiveQueriesBlockage(List<Blockage> variables) {
