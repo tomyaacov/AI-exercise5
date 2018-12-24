@@ -140,13 +140,13 @@ public class Main {
         int typeNum = input.nextInt();
         if (typeNum == 1) {
             List<Variable> evacuees = getEvacueesVariables();
-            doConjunctiveQueries(evacuees);
+            computeQueries(evacuees);
         } else if (typeNum == 2) {
             List<Variable> floodings = getFloodingVariables();
-            doConjunctiveQueries(floodings);
+            computeQueries(floodings);
         } else if (typeNum == 3) {
             List<Variable> blocks = getBlocksVariables();
-            doConjunctiveQueries(blocks);
+            computeQueries(blocks);
         } else if (typeNum == 4) {
             String path = getPathString(input);
             List<String> pathList = Arrays.asList(path.split(""));
@@ -212,7 +212,7 @@ public class Main {
         double prob = 1;
         List<Evidence> evidences = new LinkedList<>(evidenceList);
         for (Variable var : variables) {
-            prob *= EnumerationInference.ask(var, evidences, bayesNetwork);
+            prob *= (1 - EnumerationInference.ask(var, evidences, bayesNetwork));
             if (! evidences.stream().anyMatch(evidence -> evidence.getVar().equals(var))){
                 evidences.add(new Evidence(var, false));
             }
@@ -243,20 +243,14 @@ public class Main {
                         .collect(Collectors.toList());
     }
 
-    private void doConjunctiveQueries(List<Variable> variables) {
-        double prob = 1;
+    private void computeQueries(List<Variable> variables) {
+        double prob;
         List<Evidence> evidences = new LinkedList<>(evidenceList);
         for (Variable var : variables) {
-            prob *= EnumerationInference.ask(var, evidences, bayesNetwork);
-            if (prob == 0){
-                System.out.println(0);
-                return;
-            }
-            if (! evidences.stream().anyMatch(evidence -> evidence.getVar().equals(var))){
-                evidences.add(new Evidence(var, true));
-            }
+            prob = EnumerationInference.ask(var, evidences, bayesNetwork);
+            System.out.println("P(" + var.getClass().getSimpleName() + " " + var.getId() + ") = " + prob);
         }
-        System.out.println(prob);
+
     }
 
     private List<Variable> getFloodingVariables() {
