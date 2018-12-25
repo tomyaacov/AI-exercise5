@@ -15,9 +15,6 @@ Our program constructs the network in 2 main steps:<br>
 
 Reasoning:<br>
 Our reasonning algorithm uses the Enumeration algorithm. the algorithm computes the probability of a variable given a list of evidences and the network. I order to infer over multiple variables our program is using conjunctive queries chain rule and infer separately over the given variable and a changing list of evidences.
-<br>
-<br>
-<u>Example:</u><br>
 
 <br>
 <br>
