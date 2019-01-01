@@ -20,7 +20,7 @@ public class Evacuees extends Variable{
             double noisyProduct = 1;
             for (Evidence e : evidences){
                 Blockage b = (Blockage)e.getVar();
-                noisyProduct *= e.isValue() ? b.getNoisyPEvacuees() : 1;
+                noisyProduct *= e.isValue() ? 1 - b.getNoisyPEvacuees() : 1;
             }
             return 1 - noisyProduct == 0 ? 0.001 : 1 - noisyProduct;
         }
