@@ -94,7 +94,7 @@ public class Main {
 
     private HurricaneGraph initializeGraph() {
         try {
-            return parser.parseFile("src.main.resources.graph".replace(".", File.separator));
+            return parser.parseFile("src.main.resources.non_trivial1".replace(".", File.separator));
         } catch (IOException e) {
             printMenu();
             System.exit(1);
