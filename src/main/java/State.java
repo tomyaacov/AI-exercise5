@@ -80,10 +80,31 @@ public class State {
                 ", blockedEdge=" + blockedEdge +
                 ", peopleSaved=" + peopleSaved +
                 ", time=" + time +
+                ", carrying=" + carrying +
                 ')' + " utility=" + utility;
         s += " best action: " + bestAction;
         s += reachable ? " reachable" : " unreachable";
         return s;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof State)) {
+            return false;
+        }
+        State s = (State)obj;
+        if(location.equals(s.getLocation())
+                && peopleInVertex.equals(s.getPeopleInVertex())
+                && blockedEdge.equals(s.getBlockedEdge())
+                && peopleSaved == s.getPeopleSaved()
+                && time == s.getTime()
+                && carrying == s.getCarrying()){
+            return true;
+        }
+        return false;
     }
 
     public static void main(String[] args) {
@@ -95,5 +116,10 @@ public class State {
         blockedEdge.put("1-3", false);
         State s = new State("1",peopleInVertex, blockedEdge, 0, 10,0);
         System.out.println(s);
+        Map<String, Integer> peopleInVertex2 = new HashMap<>();
+        peopleInVertex2.put("1", 5);
+        peopleInVertex2.put("2", 0);
+        State s2 = new State("1",peopleInVertex, blockedEdge, 0, 10,0);
+        System.out.println(s.equals(s2));
     }
 }
