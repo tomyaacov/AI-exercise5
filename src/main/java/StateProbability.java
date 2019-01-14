@@ -30,7 +30,7 @@ public class StateProbability {
         Map<String, Boolean> blockedEdge = new HashMap<>();
         blockedEdge.put("1-2", true);
         blockedEdge.put("1-3", false);
-        State s = new State("1",peopleInVertex, blockedEdge, 0, 10);
+        State s = new State("1",peopleInVertex, blockedEdge, 0, 10, 0);
         double p = 0.5;
         StateProbability sp = new StateProbability(s, p);
         System.out.println(sp.getValue());
