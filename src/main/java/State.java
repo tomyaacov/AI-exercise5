@@ -8,7 +8,7 @@ import java.util.List;
 public class State {
 
     @Getter @Setter
-    private int location;
+    private String location;
 
     @Getter @Setter
     private List<Integer> peopleInVertex;
@@ -28,7 +28,10 @@ public class State {
     @Getter @Setter
     private boolean reachable;
 
-    public State(int location, List<Integer> peopleInVertex, List<String> blockedEdge, int peopleSaved, int time, double utility) {
+    @Getter @Setter
+    private Action bestAction;
+
+    public State(String location, List<Integer> peopleInVertex, List<String> blockedEdge, int peopleSaved, int time, double utility) {
         this.location = location;
         this.peopleInVertex = peopleInVertex;
         this.blockedEdge = blockedEdge;
@@ -36,9 +39,10 @@ public class State {
         this.time = time;
         this.utility = utility;
         this.reachable = false;
+        this.bestAction = null;
     }
 
-    public State(int location, List<Integer> peopleInVertex, List<String> blockedEdge, int peopleSaved, int time) {
+    public State(String location, List<Integer> peopleInVertex, List<String> blockedEdge, int peopleSaved, int time) {
         this.location = location;
         this.peopleInVertex = peopleInVertex;
         this.blockedEdge = blockedEdge;
@@ -46,6 +50,7 @@ public class State {
         this.time = time;
         this.utility = 0;
         this.reachable = false;
+        this.bestAction = null;
     }
 
     public int getReward(){
@@ -54,6 +59,10 @@ public class State {
         } else {
             return 0;
         }
+    }
+
+    public boolean isGoal(){
+        return  time <= 0;
     }
 
     @Override
@@ -65,6 +74,7 @@ public class State {
                 ", peopleSaved=" + peopleSaved +
                 ", time=" + time +
                 ')' + " utility=" + utility;
+        s += " best action: " + bestAction;
         s += reachable ? " reachable" : " unreachable";
         return s;
     }
@@ -76,7 +86,7 @@ public class State {
         List<String> blockedEdge = new LinkedList<>();
         blockedEdge.add("U");
         blockedEdge.add("B");
-        State s = new State(1,peopleInVertex, blockedEdge, 0, 10);
+        State s = new State("1",peopleInVertex, blockedEdge, 0, 10);
         System.out.println(s);
     }
 }
