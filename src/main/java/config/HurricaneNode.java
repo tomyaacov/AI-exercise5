@@ -1,7 +1,5 @@
 package config;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.graphstream.graph.implementations.AbstractGraph;
 import org.graphstream.graph.implementations.SingleNode;
 
