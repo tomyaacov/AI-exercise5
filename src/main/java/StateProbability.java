@@ -1,8 +1,10 @@
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class StateProbability {
 
@@ -22,13 +24,13 @@ public class StateProbability {
     }
 
     public static void main(String[] args) {
-        List<Integer> peopleInVertex = new LinkedList<>();
-        peopleInVertex.add(5);
-        peopleInVertex.add(0);
-        List<String> blockedEdge = new LinkedList<>();
-        blockedEdge.add("U");
-        blockedEdge.add("B");
-        State s = new State("2",peopleInVertex, blockedEdge, 0, 10, 1.5);
+        Map<String, Integer> peopleInVertex = new HashMap<>();
+        peopleInVertex.put("1", 5);
+        peopleInVertex.put("2", 0);
+        Map<String, String> blockedEdge = new HashMap<>();
+        blockedEdge.put("1-2", "U");
+        blockedEdge.put("1-3", "B");
+        State s = new State("1",peopleInVertex, blockedEdge, 0, 10);
         double p = 0.5;
         StateProbability sp = new StateProbability(s, p);
         System.out.println(sp.getValue());

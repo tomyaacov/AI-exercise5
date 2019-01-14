@@ -2,8 +2,10 @@ import lombok.Getter;
 import lombok.Setter;
 import main.Main;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class State {
 
@@ -11,10 +13,10 @@ public class State {
     private String location;
 
     @Getter @Setter
-    private List<Integer> peopleInVertex;
+    private Map<String, Integer> peopleInVertex;
 
     @Getter @Setter
-    private List<String> blockedEdge;
+    private Map<String, String> blockedEdge;
 
     @Getter @Setter
     private int peopleSaved;
@@ -31,7 +33,7 @@ public class State {
     @Getter @Setter
     private Action bestAction;
 
-    public State(String location, List<Integer> peopleInVertex, List<String> blockedEdge, int peopleSaved, int time, double utility) {
+    public State(String location, Map<String, Integer> peopleInVertex, Map<String, String> blockedEdge, int peopleSaved, int time, double utility) {
         this.location = location;
         this.peopleInVertex = peopleInVertex;
         this.blockedEdge = blockedEdge;
@@ -42,7 +44,7 @@ public class State {
         this.bestAction = null;
     }
 
-    public State(String location, List<Integer> peopleInVertex, List<String> blockedEdge, int peopleSaved, int time) {
+    public State(String location, Map<String, Integer> peopleInVertex, Map<String, String> blockedEdge, int peopleSaved, int time) {
         this.location = location;
         this.peopleInVertex = peopleInVertex;
         this.blockedEdge = blockedEdge;
@@ -80,12 +82,12 @@ public class State {
     }
 
     public static void main(String[] args) {
-        List<Integer> peopleInVertex = new LinkedList<>();
-        peopleInVertex.add(5);
-        peopleInVertex.add(0);
-        List<String> blockedEdge = new LinkedList<>();
-        blockedEdge.add("U");
-        blockedEdge.add("B");
+        Map<String, Integer> peopleInVertex = new HashMap<>();
+        peopleInVertex.put("1", 5);
+        peopleInVertex.put("2", 0);
+        Map<String, String> blockedEdge = new HashMap<>();
+        blockedEdge.put("1-2", "U");
+        blockedEdge.put("1-3", "B");
         State s = new State("1",peopleInVertex, blockedEdge, 0, 10);
         System.out.println(s);
     }
