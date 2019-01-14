@@ -19,8 +19,28 @@ public class Parser {
         parseVerticesNumber(reader.readLine(), graph);
         parseVertices(reader, graph);
         parseEdges(reader, graph);
-
+        parseDeadline(reader,graph);
+        parseStatrPosition(reader, graph);
+        parseShelter(reader, graph);
         return graph;
+    }
+
+    private void parseDeadline(BufferedReader reader, HurricaneGraph graph) throws IOException {
+        String line = reader.readLine();
+        line = clearComments(line);
+        graph.addAttribute("deadline", line.split(" ")[1]);
+    }
+
+    private void parseStatrPosition(BufferedReader reader, HurricaneGraph graph) throws IOException {
+        String line = reader.readLine();
+        line = clearComments(line);
+        graph.addAttribute("start", line.split(" ")[1]);
+    }
+
+    private void parseShelter(BufferedReader reader, HurricaneGraph graph) throws IOException {
+        String line = reader.readLine();
+        line = clearComments(line);
+        graph.addAttribute("shelter", line.split(" ")[1]);
     }
 
     private void parseVertices(BufferedReader reader, Graph graph) throws IOException {
@@ -34,8 +54,12 @@ public class Parser {
         vertexToParse = clearComments(vertexToParse);
         String[] vertexData = vertexToParse.split(" ");
         String vertexId = vertexData[1];
-
+        int evacuees = 0;
+        if (vertexData.length>2){
+            evacuees = Integer.valueOf(vertexData[2]);
+        }
         HurricaneNode currNode = graph.getNode(vertexId);
+        currNode.setEvacuees(evacuees);
         currNode.addAttribute("ui.label", currNode);
     }
 
