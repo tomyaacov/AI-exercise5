@@ -37,7 +37,6 @@ public class Parser {
         double floodingProbability = Double.valueOf(vertexData[3]);
 
         HurricaneNode currNode = graph.getNode(vertexId);
-        currNode.setFloodingProb(floodingProbability);
         setVertexAttributes(floodingProbability, currNode);
     }
 
