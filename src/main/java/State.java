@@ -33,23 +33,28 @@ public class State {
     @Getter @Setter
     private Action bestAction;
 
-    public State(String location, Map<String, Integer> peopleInVertex, Map<String, Boolean> blockedEdge, int peopleSaved, int time, double utility) {
+    @Getter @Setter
+    private int carrying;
+
+    public State(String location, Map<String, Integer> peopleInVertex, Map<String, Boolean> blockedEdge, int peopleSaved, int time, int carrying, double utility) {
         this.location = location;
         this.peopleInVertex = peopleInVertex;
         this.blockedEdge = blockedEdge;
         this.peopleSaved = peopleSaved;
         this.time = time;
+        this.carrying = carrying;
         this.utility = utility;
         this.reachable = false;
         this.bestAction = null;
     }
 
-    public State(String location, Map<String, Integer> peopleInVertex, Map<String, Boolean> blockedEdge, int peopleSaved, int time) {
+    public State(String location, Map<String, Integer> peopleInVertex, Map<String, Boolean> blockedEdge, int peopleSaved, int time, int carrying) {
         this.location = location;
         this.peopleInVertex = peopleInVertex;
         this.blockedEdge = blockedEdge;
         this.peopleSaved = peopleSaved;
         this.time = time;
+        this.carrying = carrying;
         this.utility = 0;
         this.reachable = false;
         this.bestAction = null;
@@ -88,7 +93,7 @@ public class State {
         Map<String, Boolean> blockedEdge = new HashMap<>();
         blockedEdge.put("1-2", true);
         blockedEdge.put("1-3", false);
-        State s = new State("1",peopleInVertex, blockedEdge, 0, 10);
+        State s = new State("1",peopleInVertex, blockedEdge, 0, 10,0);
         System.out.println(s);
     }
 }

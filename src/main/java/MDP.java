@@ -16,6 +16,9 @@ public class MDP {
     @Getter @Setter
     private HurricaneGraph graph;
 
+    public MDP(HurricaneGraph graph) {
+        this.graph = graph;
+    }
 
     void initialize(){
         List<State> states = new LinkedList<>();
@@ -26,14 +29,52 @@ public class MDP {
     public List<StateProbability> transitionFunction(State state, Action action){
         List<StateProbability> stateProbabilityList = new LinkedList<>();
         HurricaneNode node = graph.getNode(action.getTo());
-        List<Edge> unknownEdges = new LinkedList<>();
+        List<Edge> unknownBlockage = new LinkedList<>();
         for (Edge e:node.getEachLeavingEdge()){
             if (state.getBlockedEdge().get(e.getId()) == null){
-                unknownEdges.add(e);
+                unknownBlockage.add(e);
             }
+        }
+        List<Map<String, Boolean>> allMaps = new LinkedList<>();
+        getAllEdgeCombinations(unknownBlockage, new LinkedList<>(), allMaps);
+        for (Map<String, Boolean> map : allMaps){
+            State newState = buildNewState(state, map, node.getId(), action.getEdge());
+            double probability = computeProbability(map);
+            stateProbabilityList.add(new StateProbability(newState, probability));
         }
 
         return stateProbabilityList;
+    }
+
+    public State buildNewState(State oldState, Map<String, Boolean> unknownBlockageMap, String nodeId, Edge edge){
+        String location = nodeId;
+        Map<String, Integer> peopleInVertex = new HashMap<>(oldState.getPeopleInVertex());
+        Map<String, Boolean> blockedEdge =  new HashMap<>(oldState.getBlockedEdge());
+        blockedEdge.putAll(unknownBlockageMap);
+        int peopleSaved = oldState.getPeopleSaved();
+        int time = oldState.getTime() - (int)edge.getAttribute("weight");
+        int carrying = oldState.getCarrying();
+        if (graph.getAttribute("shelter").equals(nodeId)){
+            peopleSaved += carrying;
+            carrying = 0;
+        } else {
+            carrying += peopleInVertex.get(nodeId);
+            peopleInVertex.put(nodeId, 0);
+        }
+        return new State(location, peopleInVertex, blockedEdge, peopleSaved, time, carrying);
+
+    }
+
+    public double computeProbability(Map<String, Boolean> unknownBlockageMap){
+        double probability = 1;
+        for (Map.Entry<String, Boolean> entry : unknownBlockageMap.entrySet()) {
+            if(entry.getValue()){
+                probability *= (double)graph.getEdge(entry.getKey()).getAttribute("blockProb");
+            } else {
+                probability *= (1-(double)graph.getEdge(entry.getKey()).getAttribute("blockProb"));
+            }
+        }
+        return probability;
     }
 
     public List<Action> getAllActions(State state){
@@ -72,6 +113,7 @@ public class MDP {
         }
 
     }
+
     public static void main(String[] args) throws IOException {
         Parser p = new Parser();
         HurricaneGraph s =p.parseFile("src//main//resources//graph");
@@ -83,9 +125,12 @@ public class MDP {
         unknownBlockage.add(e1);
         unknownBlockage.add(e2);
         unknownBlockage.add(e3);
-        MDP m = new MDP();
+        MDP m = new MDP(s);
         List<Map<String, Boolean>> allMaps = new LinkedList<>();
         m.getAllEdgeCombinations(unknownBlockage, new LinkedList<>(), allMaps);
         System.out.println(allMaps);
+        for (Map<String, Boolean> map : allMaps){
+            System.out.println(m.computeProbability(map));
+        }
     }
 }
