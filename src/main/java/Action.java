@@ -1,5 +1,6 @@
 import lombok.Getter;
 import lombok.Setter;
+import org.graphstream.graph.Edge;
 
 public class Action {
 
@@ -9,9 +10,13 @@ public class Action {
     @Getter @Setter
     private String to;
 
-    public Action(String from, String to) {
+    @Getter @Setter
+    private Edge edge;
+
+    public Action(String from, String to, Edge edge) {
         this.from = from;
         this.to = to;
+        this.edge = edge;
     }
 
     @Override
