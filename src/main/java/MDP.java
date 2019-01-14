@@ -6,6 +6,7 @@ import org.graphstream.graph.Edge;
 import parser.Parser;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,28 +23,67 @@ public class MDP {
     }
 
     //TODO should be private
-    public List<State> initialize(){
-        List<State> states = new LinkedList<>();
+    public Set<State> initialize(){
+        Set<State> states = new HashSet<>();
         State init = calculateInitState();
         states.add(init);
+        calculateStatesBFS(new LinkedList<>(Arrays.asList(init)), states);
         return states;
+    }
+
+    private void calculateStatesBFS(List<State> fringe, Set<State> allStates){
+        while(!fringe.isEmpty()){
+            State s = fringe.remove(0);
+            List<Action> actions = getAllActions(s);
+            List<State> newStates = buildNewStatesFromAction(s, actions);
+            allStates.addAll(newStates);
+            fringe.addAll(newStates.stream()
+                    .filter(state -> ! state.isGoal())
+                    .collect(Collectors.toList()));
+            fringe = fringe.stream().distinct().collect(Collectors.toList());
+        }
+    }
+
+    private List<State> buildNewStatesFromAction(State s, List<Action> actions) {
+        List<State> states = new LinkedList<>();
+        for (Action action: actions){
+            states.addAll(transitionFunction(s, action).stream()
+                    .map(sp -> sp.getState())
+                    .collect(Collectors.toList()));
+        }
+        return states;
+    }
+
+    private List<State> updateFringe(List<State> fringe, List<State> newStates) {
+        newStates.stream()
+                .filter(state -> ! state.isGoal())
+                .collect(Collectors.toList())
+                .addAll(fringe);
+        return fringe;
     }
 
     private State calculateInitState() {
         Map<String, Integer> peopleInNodes = getInitializePeopleInNodes();
         Map<String, Boolean> blockageThreat = getThreatBlockageEdges();
+
         return new State(
                 graph.getAttribute("start"), peopleInNodes, blockageThreat,
-                0, graph.getAttribute("deadline"), 0
+                0, Integer.parseInt(graph.getAttribute("deadline")), 0
         );
     }
 
     private Map<String, Boolean> getThreatBlockageEdges() {
-        return graph.getEdgeSet().stream()
-                .filter(edge -> ! edge.getAttribute("blockProb").equals(0))
-                .collect(Collectors.toMap(
-                    entry -> entry.getId(),
-                    entry -> null));
+        Map<String, Boolean> blockageThreat = new HashMap<>();
+        for (Edge edge : graph.getEdgeSet()){
+            if (Double.valueOf(edge.getAttribute("blockProb").toString()) == 0){
+                blockageThreat.put(edge.getId(), false);
+            } else if (Double.valueOf(edge.getAttribute("blockProb").toString()) == 1){
+                blockageThreat.put(edge.getId(), true);
+            } else {
+                blockageThreat.put(edge.getId(), null);
+            }
+        }
+        return blockageThreat;
     }
 
     private Map<String, Integer> getInitializePeopleInNodes() {
@@ -58,6 +98,9 @@ public class MDP {
         HurricaneNode node = graph.getNode(action.getTo());
         List<Edge> unknownBlockage = new LinkedList<>();
         for (Edge e:node.getEachLeavingEdge()){
+            if (e.equals(action.getEdge())){
+                continue;
+            }
             if (state.getBlockedEdge().get(e.getId()) == null){
                 unknownBlockage.add(e);
             }
@@ -112,7 +155,7 @@ public class MDP {
         HurricaneNode node = graph.getNode(state.getLocation());
         for(Edge e:node.getEachEdge()){
             if(!"B".equals(state.getBlockedEdge().get(e.getId()))){//Edge is not blocked
-                if (state.getTime()-(double)e.getAttribute("weight") >= 0){//there is enough time
+                if (state.getTime()-(int)e.getAttribute("weight") >= 0){//there is enough time
                     Action a = new Action(node.getId(), e.getOpposite(node).getId(), e);
                     actionList.add(a);
                 }
@@ -155,11 +198,11 @@ public class MDP {
         MDP m = new MDP(s);
         List<Map<String, Boolean>> allMaps = new LinkedList<>();
         m.getAllEdgeCombinations(unknownBlockage, new LinkedList<>(), allMaps);
-        System.out.println(allMaps);
-        for (Map<String, Boolean> map : allMaps){
-            System.out.println(m.computeProbability(map));
-        }
-        System.out.println((m.initialize()));
+//        System.out.println(allMaps);
+//        for (Map<String, Boolean> map : allMaps){
+//            System.out.println(m.computeProbability(map));
+//        }
+        System.out.println((m.initialize().size()));
 
     }
 }

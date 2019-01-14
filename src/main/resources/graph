@@ -9,6 +9,6 @@ E4 4 5 W1 ; Edge3 between vertices 3 and 4, weight 3
 E4 2 4 W4 0.5 ; Edge4 between vertices 2 and 4, weight 4
 E5 2 5 W4 0.5 ; Edge4 between vertices 2 and 4, weight 4
 
-Deadline 10
+Deadline 3
 Start 1
 Shelter 5
