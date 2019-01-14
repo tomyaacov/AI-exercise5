@@ -1,10 +1,7 @@
 import lombok.Getter;
 import lombok.Setter;
-import main.Main;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class State {
@@ -83,7 +80,7 @@ public class State {
                 ", carrying=" + carrying +
                 ')' + " utility=" + utility;
         s += " best action: " + bestAction;
-        s += reachable ? " reachable" : " unreachable";
+        //s += reachable ? " reachable" : " unreachable";
         return s;
     }
 

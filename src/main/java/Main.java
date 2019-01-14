@@ -1,19 +1,12 @@
-package main;
-
-
 import config.HurricaneGraph;
 import lombok.Getter;
 import lombok.Setter;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Node;
 import org.graphstream.ui.view.Viewer;
 import parser.Parser;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.AlgorithmConstraints;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Main {
 
@@ -24,16 +17,19 @@ public class Main {
     @Getter @Setter
     HurricaneGraph graph;
 
-//    @Getter @Setter
-//    MDP mdp;
+    @Getter @Setter
+    MDP mdp;
 
 
     public void run(){
         initialize();
         Viewer view = graph.display();
-//        mdp = new MDP(graph);
-//        mdp.initialize();
-//        Algorithm.
+        mdp = new MDP(graph);
+        mdp.initialize();
+        Algorithm.ValueIteration(mdp, 1, 0.01);
+        System.out.println(mdp);
+        runSimulation();
+
     }
 
 
@@ -52,6 +48,17 @@ public class Main {
             System.exit(1);
         }
         return null;
+    }
+
+    private void runSimulation(){
+        System.out.println("Starting Simulation");
+        State s = mdp.calculateInitState();
+        s = mdp.getStates().get(mdp.getStates().indexOf(s));
+        while (!s.isGoal() && s.getBestAction() != null){
+            System.out.println(s);
+            s = mdp.sampleNextState(s);
+        }
+        System.out.println(s);
     }
 
 
