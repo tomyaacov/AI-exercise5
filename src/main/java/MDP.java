@@ -1,7 +1,10 @@
 import config.HurricaneGraph;
+import config.HurricaneNode;
 import lombok.Getter;
 import lombok.Setter;
+import org.graphstream.graph.Node;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +19,13 @@ public class MDP {
 
     void initialize(){
         List<State> states = new LinkedList<>();
-//        graph.getNode(1).get
+        String startId = graph.getAttribute("start");
+
+
+
+
+
+
 
     }
 }
