@@ -7,6 +7,7 @@ import parser.Parser;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MDP {
 
@@ -17,10 +18,36 @@ public class MDP {
     private HurricaneGraph graph;
 
 
-    void initialize(){
+    //TODO should be private
+    public List<State> initialize(){
         List<State> states = new LinkedList<>();
-//        graph.getNode(1).get
+        State init = calculateInitState();
+        states.add(init);
+        return states;
+    }
 
+    private State calculateInitState() {
+        Map<String, Integer> peopleInNodes = getInitializePeopleInNodes();
+        Map<String, Boolean> blockageThreat = getThreatBlockageEdges();
+        return new State(
+                graph.getAttribute("start"), peopleInNodes, blockageThreat,
+                0, graph.getAttribute("deadline"), 0
+        );
+    }
+
+    private Map<String, Boolean> getThreatBlockageEdges() {
+        return graph.getEdgeSet().stream()
+                .filter(edge -> ! edge.getAttribute("blockProb").equals(0))
+                .collect(Collectors.toMap(
+                    entry -> entry.getId(),
+                    entry -> null));
+    }
+
+    private Map<String, Integer> getInitializePeopleInNodes() {
+        List<HurricaneNode> nodes = new LinkedList<>(graph.getNodeSet());
+        return nodes.stream().collect(Collectors.toMap(
+                        entry -> entry.getId(),
+                        entry -> entry.getEvacuees()));
     }
 
     public List<StateProbability> transitionFunction(State state, Action action){
@@ -87,5 +114,7 @@ public class MDP {
         List<Map<String, Boolean>> allMaps = new LinkedList<>();
         m.getAllEdgeCombinations(unknownBlockage, new LinkedList<>(), allMaps);
         System.out.println(allMaps);
+        System.out.println((m.initialize()));
+
     }
 }
