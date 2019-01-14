@@ -34,16 +34,11 @@ public class Parser {
         vertexToParse = clearComments(vertexToParse);
         String[] vertexData = vertexToParse.split(" ");
         String vertexId = vertexData[1];
-        double floodingProbability = Double.valueOf(vertexData[3]);
 
         HurricaneNode currNode = graph.getNode(vertexId);
-        currNode.setFloodingProb(floodingProbability);
-        setVertexAttributes(floodingProbability, currNode);
+        currNode.addAttribute("ui.label", currNode);
     }
 
-    private void setVertexAttributes(double flooding, HurricaneNode v) {
-        v.addAttribute("ui.label", v);
-    }
 
         private void parseEdges(BufferedReader reader, Graph graph) throws IOException {
         String line;
@@ -79,16 +74,24 @@ public class Parser {
         line = clearComments(line);
         String[] edgeInfo = line.split(" ");
         int edgeWeight = Integer.valueOf(edgeInfo[3].substring(1));
-
+        double blockProbability = 0;
+        if (edgeInfo.length > 4){
+            blockProbability = Double.valueOf(edgeInfo[4]);
+        }
         Edge e = graph.addEdge(edgeInfo[1] + "-" + edgeInfo[2], edgeInfo[1], edgeInfo[2]);
-        setEdgeAttributes(edgeWeight, e);
+        setEdgeAttributes(edgeWeight, blockProbability, e);
     }
 
-    private void setEdgeAttributes(int edgeWeight, Edge e) {
+    private void setEdgeAttributes(int edgeWeight, double blockProbability, Edge e) {
         e.addAttribute("weight", edgeWeight);
+        e.addAttribute("blockProb", blockProbability);
+
         e.addAttribute("ui.label", edgeWeight);
         e.setAttribute("ui.class", "edge");
         e.addAttribute("block", false);
+        e.addAttribute("ui.label", e.getAttribute("blockProb").toString());
+
+
     }
 
     private String clearComments(String line) {
