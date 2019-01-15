@@ -20,23 +20,23 @@ public class MDP {
 
     public MDP(HurricaneGraph graph) {
         this.graph = graph;
+        this.states = new LinkedList<>();
     }
 
     //TODO should be private
-    public Set<State> initialize(){
-        Set<State> states = new HashSet<>();
+    public void initialize(){
         State init = calculateInitState();
         states.add(init);
-        calculateStatesBFS(new LinkedList<>(Arrays.asList(init)), states);
-        return states;
+        calculateStatesBFS(new LinkedList<>(Arrays.asList(init)));
+        states = states.stream().distinct().collect(Collectors.toList());
     }
 
-    private void calculateStatesBFS(List<State> fringe, Set<State> allStates){
+    private void calculateStatesBFS(List<State> fringe){
         while(!fringe.isEmpty()){
             State s = fringe.remove(0);
             List<Action> actions = getAllActions(s);
             List<State> newStates = buildNewStatesFromAction(s, actions);
-            allStates.addAll(newStates);
+            states.addAll(newStates);
             fringe.addAll(newStates.stream()
                     .filter(state -> ! state.isGoal())
                     .collect(Collectors.toList()));
@@ -62,7 +62,7 @@ public class MDP {
         return fringe;
     }
 
-    private State calculateInitState() {
+    public State calculateInitState() {
         Map<String, Integer> peopleInNodes = getInitializePeopleInNodes();
         Map<String, Boolean> blockageThreat = getThreatBlockageEdges();
 
@@ -110,7 +110,11 @@ public class MDP {
         for (Map<String, Boolean> map : allMaps){
             State newState = buildNewState(state, map, node.getId(), action.getEdge());
             double probability = computeProbability(map);
-            stateProbabilityList.add(new StateProbability(newState, probability));
+            if (states.contains(newState)){
+                stateProbabilityList.add(new StateProbability(states.get(states.indexOf(newState)), probability));
+            } else {
+                stateProbabilityList.add(new StateProbability(newState, probability));
+            }
         }
 
         return stateProbabilityList;
@@ -154,7 +158,7 @@ public class MDP {
         }
         HurricaneNode node = graph.getNode(state.getLocation());
         for(Edge e:node.getEachEdge()){
-            if(!"B".equals(state.getBlockedEdge().get(e.getId()))){//Edge is not blocked
+            if(!state.getBlockedEdge().get(e.getId())){//Edge is not blocked
                 if (state.getTime()-(int)e.getAttribute("weight") >= 0){//there is enough time
                     Action a = new Action(node.getId(), e.getOpposite(node).getId(), e);
                     actionList.add(a);
@@ -184,6 +188,28 @@ public class MDP {
 
     }
 
+    public State sampleNextState(State s){
+        double random = Math.random();
+        List<StateProbability> stateProbabilities = transitionFunction(s, s.getBestAction());
+        double cumulativeProbability = 0;
+        for (StateProbability sp:stateProbabilities){
+            cumulativeProbability += sp.getProbability();
+            if (cumulativeProbability >= random){
+                return  sp.getState();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        String string = "Resulting MDP\n";
+        for (State s: states){
+            string += s.toString() + "\n";
+        }
+        return string;
+    }
+
     public static void main(String[] args) throws IOException {
         Parser p = new Parser();
         HurricaneGraph s =p.parseFile("src//main//resources//graph");
@@ -202,7 +228,6 @@ public class MDP {
 //        for (Map<String, Boolean> map : allMaps){
 //            System.out.println(m.computeProbability(map));
 //        }
-        System.out.println((m.initialize().size()));
 
     }
 }
