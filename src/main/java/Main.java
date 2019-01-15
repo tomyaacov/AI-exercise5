@@ -29,7 +29,7 @@ public class Main {
         System.out.println("Running Value Iteration...");
         Algorithm.ValueIteration(mdp, 1, 0.0001);
         System.out.println(mdp);
-        runTestingSimulations(10000);
+        //runTestingSimulations(10000);
         Scanner input = new Scanner(System.in);
         System.out.println("Run Simulation? (1-Yes, 0-No)");
         int typeNum = input.nextInt();
