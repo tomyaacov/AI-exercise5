@@ -27,8 +27,9 @@ public class Main {
         mdp = new MDP(graph);
         mdp.initialize();
         System.out.println("Running Value Iteration...");
-        Algorithm.ValueIteration(mdp, 1, 0.01);
+        Algorithm.ValueIteration(mdp, 1, 0.0001);
         System.out.println(mdp);
+        runTestingSimulations(10000);
         Scanner input = new Scanner(System.in);
         System.out.println("Run Simulation? (1-Yes, 0-No)");
         int typeNum = input.nextInt();
@@ -66,6 +67,24 @@ public class Main {
             s = mdp.sampleNextState(s);
         }
         System.out.println(s);
+        System.out.println("Final Reward: " + s.getPeopleSaved());
+    }
+
+    private void runTestingSimulations(int numOfSimulations){
+        List<Integer> resultList = new ArrayList<>();
+        for (int i=0; i<numOfSimulations; i++){
+            State s = mdp.calculateInitState();
+            s = mdp.getStates().get(mdp.getStates().indexOf(s));
+            while (!s.isGoal() && s.getBestAction() != null){
+                s = mdp.sampleNextState(s);
+            }
+            resultList.add(s.getPeopleSaved());
+        }
+        OptionalDouble average = resultList
+                .stream()
+                .mapToDouble(a -> a)
+                .average();
+        System.out.println("Result of running " + numOfSimulations + " simulations: " + average);
     }
 
 
