@@ -26,10 +26,17 @@ public class Main {
         Viewer view = graph.display();
         mdp = new MDP(graph);
         mdp.initialize();
+        System.out.println("Running Value Iteration...");
         Algorithm.ValueIteration(mdp, 1, 0.01);
         System.out.println(mdp);
-        runSimulation();
-
+        Scanner input = new Scanner(System.in);
+        System.out.println("Run Simulation? (1-Yes, 0-No)");
+        int typeNum = input.nextInt();
+        while (typeNum == 1){
+            runSimulation();
+            System.out.println("Run Simulation? (1-Yes, 0-No)");
+            typeNum = input.nextInt();
+        }
     }
 
 

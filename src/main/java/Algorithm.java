@@ -27,7 +27,7 @@ public class Algorithm {
             for (StateProbability sp : stateProbabilities){
                 currentExpectedValue += sp.getValue();
             }
-            if (currentExpectedValue > maxExpectedValue){
+            if (currentExpectedValue >= maxExpectedValue){
                 maxExpectedValue = currentExpectedValue;
                 bestAction = a;
             }
